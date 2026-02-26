@@ -1,5 +1,5 @@
 # routes/categories.py - Categories endpoint
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
 import sys
 import os
@@ -7,12 +7,22 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 
 from lib.config import VALID_PLACE_TYPES
 from lib.translations import get_category_translation, get_available_locales, get_translations
+from api_server.auth import get_current_user
+
+def require_auth(user=Depends(get_current_user)) -> dict:
+    """Require authentication."""
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return user
 
 router = APIRouter(prefix="/api", tags=["categories"])
 
 
 @router.get("/categories")
-async def get_categories(locale: str = "en"):
+async def get_categories(
+    locale: str = "en",
+    user: dict = Depends(require_auth)
+):
     """Get all available business categories with translations."""
     
     # Validate locale

@@ -104,6 +104,23 @@ if (!cookieLang) {
           applyI18n();
         }
       }, 1000);
+
+      // Auth redirection fallback
+      function checkAuthRedirect() {
+        const publicRoutes = ['/', '/login', '/register', '/auth/verify'];
+        const path = window.location.pathname.replace(/\/$/, '') || '/';
+        const isPublic = publicRoutes.includes(path) || path.startsWith('/locales/') || path === '/favicon.svg';
+        
+        const hasToken = document.cookie.includes('is_logged_in=true');
+        
+        if (!hasToken && !isPublic) {
+          window.location.href = '/login';
+        } else if (hasToken && (path === '/login' || path === '/register')) {
+          window.location.href = '/dashboard';
+        }
+      }
+      checkAuthRedirect();
+      window.addEventListener('popstate', checkAuthRedirect);
     </script>
   </body>
 </html>

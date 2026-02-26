@@ -29,16 +29,6 @@ import Navigation from '../../components/Navigation';
   <script>
     import { authApi } from '../../lib/api';
 
-    // Client-side auth check
-    async function checkAuth() {
-      try {
-        await authApi.me();
-      } catch {
-        window.location.href = '/login';
-      }
-    }
-    checkAuth();
-
     document.getElementById('logout-btn')?.addEventListener('click', async () => {
       try {
         await authApi.logout();

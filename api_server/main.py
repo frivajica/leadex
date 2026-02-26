@@ -108,6 +108,9 @@ async def register_password(request: PasswordRegisterRequest):
     if not request.password or len(request.password) < 8:
         raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
 
+    if len(request.password.encode("utf-8")) > 72:
+        raise HTTPException(status_code=400, detail="Password cannot be longer than 72 bytes")
+
     success, message, user = register_with_password(request.email, request.password)
 
     if not success:
@@ -121,14 +124,26 @@ async def register_password(request: PasswordRegisterRequest):
         "user": user,
     }
 
-    # Return response with cookie set
+    # Return response with cookies set
     from fastapi.responses import JSONResponse
-    return JSONResponse(
-        content=response,
-        headers={
-            "Set-Cookie": f"{COOKIE_NAME}={token_data['access_token']}; HttpOnly; Path=/; Max-Age={COOKIE_MAX_AGE}; SameSite=Lax"
-        }
+    response_obj = JSONResponse(content=response)
+    response_obj.set_cookie(
+        key=COOKIE_NAME,
+        value=token_data["access_token"],
+        httponly=True,
+        path="/",
+        max_age=COOKIE_MAX_AGE,
+        samesite="lax",
     )
+    response_obj.set_cookie(
+        key="is_logged_in",
+        value="true",
+        httponly=False,
+        path="/",
+        max_age=COOKIE_MAX_AGE,
+        samesite="lax",
+    )
+    return response_obj
 
 
 @app.post("/api/auth/login/password")
@@ -136,6 +151,9 @@ async def login_password(request: PasswordLoginRequest):
     """Login with email and password."""
     if not request.email or not request.password:
         raise HTTPException(status_code=400, detail="Email and password are required")
+
+    if len(request.password.encode("utf-8")) > 72:
+        raise HTTPException(status_code=400, detail="Password cannot be longer than 72 bytes")
 
     success, message, user = login_with_password(request.email, request.password)
 
@@ -150,14 +168,26 @@ async def login_password(request: PasswordLoginRequest):
         "user": user,
     }
 
-    # Return response with cookie set
+    # Return response with cookies set
     from fastapi.responses import JSONResponse
-    return JSONResponse(
-        content=response,
-        headers={
-            "Set-Cookie": f"{COOKIE_NAME}={token_data['access_token']}; HttpOnly; Path=/; Max-Age={COOKIE_MAX_AGE}; SameSite=Lax"
-        }
+    response_obj = JSONResponse(content=response)
+    response_obj.set_cookie(
+        key=COOKIE_NAME,
+        value=token_data["access_token"],
+        httponly=True,
+        path="/",
+        max_age=COOKIE_MAX_AGE,
+        samesite="lax",
     )
+    response_obj.set_cookie(
+        key="is_logged_in",
+        value="true",
+        httponly=False,
+        path="/",
+        max_age=COOKIE_MAX_AGE,
+        samesite="lax",
+    )
+    return response_obj
 
 
 @app.post("/api/auth/verify")
@@ -176,14 +206,26 @@ async def verify(request: TokenRequest):
         "user": user,
     }
 
-    # Return response with cookie set
+    # Return response with cookies set
     from fastapi.responses import JSONResponse
-    return JSONResponse(
-        content=response,
-        headers={
-            "Set-Cookie": f"{COOKIE_NAME}={token_data['access_token']}; HttpOnly; Path=/; Max-Age={COOKIE_MAX_AGE}; SameSite=Lax"
-        }
+    response_obj = JSONResponse(content=response)
+    response_obj.set_cookie(
+        key=COOKIE_NAME,
+        value=token_data["access_token"],
+        httponly=True,
+        path="/",
+        max_age=COOKIE_MAX_AGE,
+        samesite="lax",
     )
+    response_obj.set_cookie(
+        key="is_logged_in",
+        value="true",
+        httponly=False,
+        path="/",
+        max_age=COOKIE_MAX_AGE,
+        samesite="lax",
+    )
+    return response_obj
 
 
 @app.get("/api/auth/me")
@@ -196,14 +238,12 @@ async def get_me(user=Depends(get_current_user)):
 
 @app.post("/api/auth/logout")
 async def logout():
-    """Logout user by clearing the cookie."""
+    """Logout user by clearing cookies."""
     from fastapi.responses import JSONResponse
-    return JSONResponse(
-        content={"message": "Logged out successfully"},
-        headers={
-            "Set-Cookie": f"{COOKIE_NAME}=; HttpOnly; Path=/; Max-Age=0"
-        }
-    )
+    response = JSONResponse(content={"message": "Logged out successfully"})
+    response.delete_cookie(key=COOKIE_NAME, path="/")
+    response.delete_cookie(key="is_logged_in", path="/")
+    return response
 
 
 # Health check
