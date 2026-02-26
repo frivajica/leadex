@@ -1,8 +1,11 @@
-# main.py - FastAPI application entry point
 import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 from api_server.database import init_db
 from api_server.auth import register_user, verify_magic_link, create_access_token, get_current_user, register_with_password, login_with_password
@@ -24,10 +27,20 @@ app = FastAPI(
 )
 
 # Configure CORS
-CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:4321")
+# Configure CORS
+dev_origins = [
+    "http://localhost:4321",
+    "http://localhost:5173",
+    "http://127.0.0.1:4321",
+    "http://127.0.0.1:5173",
+]
+CORS_ORIGINS_STR = os.getenv("CORS_ORIGINS", "")
+env_origins = [origin.strip() for origin in CORS_ORIGINS_STR.split(",") if origin.strip()]
+CORS_ORIGINS = list(set(dev_origins + env_origins))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[CORS_ORIGINS, "http://localhost:4321", "http://localhost:5173"],
+    allow_origins=CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -83,7 +96,7 @@ async def register(request: EmailRequest):
 @app.post("/api/auth/login")
 async def login(request: EmailRequest):
     """Request magic link for login."""
-    return register(request)
+    return await register(request)
 
 
 @app.post("/api/auth/register/password")
