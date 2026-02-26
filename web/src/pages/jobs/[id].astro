@@ -1,0 +1,51 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import JobDetails from '../../components/JobDetails';
+import Navigation from '../../components/Navigation';
+
+const { id } = Astro.params;
+const apiUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:8000';
+---
+
+<Layout title={`Job #${id} - Lead Extractor`}>
+  <div class="min-h-screen bg-gray-50">
+    <!-- Navigation -->
+    <Navigation client:load currentPath="/dashboard" />
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="mb-6">
+        <a href="/dashboard" class="inline-flex items-center gap-2 text-gray-600 hover:text-primary-600 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to Dashboard
+        </a>
+      </div>
+
+      <JobDetails jobId={Number(id)} apiUrl={apiUrl} client:load />
+    </main>
+  </div>
+
+  <script>
+    import { authApi } from '../../lib/api';
+
+    // Client-side auth check
+    async function checkAuth() {
+      try {
+        await authApi.me();
+      } catch {
+        window.location.href = '/login';
+      }
+    }
+    checkAuth();
+
+    document.getElementById('logout-btn')?.addEventListener('click', async () => {
+      try {
+        await authApi.logout();
+      } catch (e) {
+        // Continue with logout even if API fails
+      }
+      window.location.href = '/login';
+    });
+  </script>
+</Layout>

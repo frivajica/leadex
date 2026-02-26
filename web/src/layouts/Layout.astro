@@ -1,0 +1,145 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+
+// Server-side language detection
+const cookieLang = Astro.cookies.get('i18next')?.value;
+const headerLang = Astro.request.headers.get('accept-language')?.split(',')[0].split('-')[0];
+const supported = ['en', 'es', 'fr'];
+const currentLocale = cookieLang || (supported.includes(headerLang || '') ? headerLang : 'en');
+
+// Persists the detected language if not already set in cookie
+if (!cookieLang) {
+  Astro.cookies.set('i18next', currentLocale as string, { path: '/', maxAge: 60 * 60 * 24 * 365, sameSite: 'lax' });
+}
+---
+
+<!doctype html>
+<html lang={currentLocale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Extract leads from Google Maps for your local business outreach" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>{title}</title>
+  </head>
+  <body class="bg-gray-50 text-gray-900 min-h-screen font-sans antialiased">
+    <slot />
+    <script is:inline>
+      async function getTranslations(lang) {
+        try {
+          const response = await fetch(`/locales/${lang}.json`);
+          return await response.json();
+        } catch (e) {
+          console.error('Failed to load translations', e);
+          return {};
+        }
+      }
+
+      function getLang() {
+        const match = document.cookie.match(/(?:^|;)\s*i18next\s*=\s*(en|es|fr)(?:;|$)/);
+        if (match) return match[1];
+
+        const browserLang = navigator.language?.split('-')[0];
+        const supported = ['en', 'es', 'fr'];
+        const detected = supported.includes(browserLang) ? browserLang : 'en';
+
+        document.cookie = `i18next=${detected}; path=/; max-age=31536000`;
+        return detected;
+      }
+
+      function getNestedValue(obj, path) {
+        return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+      }
+
+      let isApplying = false;
+      async function applyI18n() {
+        if (isApplying) return;
+        isApplying = true;
+        
+        try {
+          const lang = getLang();
+          document.documentElement.lang = lang;
+          const translations = await getTranslations(lang);
+          
+          if (!translations || Object.keys(translations).length === 0) {
+            console.warn('[i18n] No translations found for:', lang);
+            return;
+          }
+
+          let count = 0;
+          document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            const value = getNestedValue(translations, key);
+            if (value) {
+              if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                el.placeholder = value;
+              } else {
+                el.textContent = value;
+              }
+              count++;
+            }
+          });
+        } finally {
+          isApplying = false;
+        }
+      }
+
+      window.addEventListener('languagechange', applyI18n);
+      window.addEventListener('localeChange', (e) => {
+        applyI18n();
+      });
+      document.addEventListener('DOMContentLoaded', applyI18n);
+
+      let lastCookie = document.cookie;
+      setInterval(() => {
+        if (document.cookie !== lastCookie) {
+          lastCookie = document.cookie;
+          applyI18n();
+        }
+      }, 1000);
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+
+  button, a, input, select, label {
+    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+
+  :focus-visible {
+    outline: 2px solid #8b5cf6;
+    outline-offset: 2px;
+  }
+</style>

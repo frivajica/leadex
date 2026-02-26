@@ -1,0 +1,201 @@
+---
+import Layout from '../layouts/Layout.astro';
+import LanguageSwitcher from '../components/LanguageSwitcher';
+
+const cookieLang = Astro.cookies.get('i18next')?.value;
+const headerLang = Astro.request.headers.get('accept-language')?.split(',')[0].split('-')[0];
+const supported = ['en', 'es', 'fr'];
+const currentLocale = cookieLang || (supported.includes(headerLang || '') ? headerLang : 'en');
+---
+
+<Layout title="Lead Extractor - Find Local Business Leads">
+  <div class="min-h-screen">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-100">
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 items-center">
+          <div class="flex items-center gap-2">
+            <div class="w-9 h-9 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <span class="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">Lead Extractor</span>
+          </div>
+          <div class="flex items-center gap-6">
+            <LanguageSwitcher client:load locale={currentLocale} />
+            <div class="flex items-center gap-3">
+              <a href="/login" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-i18n="auth.sign_in">
+                Sign In
+              </a>
+              <a
+                href="/register"
+                class="px-4 py-2 text-sm font-medium bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-lg hover:from-primary-700 hover:to-primary-800 transition-all shadow-md hover:shadow-lg"
+                data-i18n="landing.get_started"
+              >
+                Get Started
+              </a>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <!-- Hero -->
+      <section class="py-20 lg:py-28 bg-gradient-to-b from-white via-primary-50/30 to-primary-50/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium mb-6">
+            <span class="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></span>
+            <span data-i18n="landing.hero_badge">100% Free & Open Source</span>
+          </div>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            <span data-i18n="landing.hero_title">Extract Leads from</span><br />
+            <span class="bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent" data-i18n="landing.hero_subtitle">Google Maps</span>
+          </h1>
+          <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed" data-i18n="landing.hero_desc">
+            Find local businesses without websites - perfect for web design, SEO, and marketing agencies looking for new clients.
+          </p>
+          <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a
+              href="/register"
+              class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl text-lg font-semibold hover:from-primary-700 hover:to-primary-800 transition-all shadow-lg hover:shadow-xl"
+            >
+              <span data-i18n="landing.start_free">Start Free</span>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </a>
+            <a
+              href="#features"
+              class="inline-flex items-center justify-center px-8 py-4 bg-white text-gray-700 rounded-xl text-lg font-semibold border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all"
+              data-i18n="landing.learn_more"
+            >
+              Learn More
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features -->
+      <section id="features" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-i18n="landing.how_it_works">How It Works</h2>
+            <p class="text-lg text-gray-600 max-w-xl mx-auto" data-i18n="landing.how_it_works_desc">
+              Three simple steps to find your next clients
+            </p>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="p-8 rounded-2xl bg-gray-50 border border-gray-100 hover:shadow-card-hover transition-shadow">
+              <div class="w-14 h-14 bg-primary-100 rounded-2xl flex items-center justify-center mb-5">
+                <svg class="w-7 h-7 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold mb-3 text-gray-900" data-i18n="landing.feature_1_title">Search Location</h3>
+              <p class="text-gray-600 leading-relaxed" data-i18n="landing.feature_1_desc">
+                Enter any location and select business categories to search. We'll scan Google Maps for businesses in that area.
+              </p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="p-8 rounded-2xl bg-gray-50 border border-gray-100 hover:shadow-card-hover transition-shadow">
+              <div class="w-14 h-14 bg-accent-100 rounded-2xl flex items-center justify-center mb-5">
+                <svg class="w-7 h-7 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold mb-3 text-gray-900" data-i18n="landing.feature_2_title">Filter & Score</h3>
+              <p class="text-gray-600 leading-relaxed" data-i18n="landing.feature_2_desc">
+                We filter businesses without websites and score them based on rating, reviews, photos, and profile completeness.
+              </p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="p-8 rounded-2xl bg-gray-50 border border-gray-100 hover:shadow-card-hover transition-shadow">
+              <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mb-5">
+                <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold mb-3 text-gray-900" data-i18n="landing.feature_3_title">Export & Reach Out</h3>
+              <p class="text-gray-600 leading-relaxed" data-i18n="landing.feature_3_desc">
+                Export your leads as CSV or JSON with all the contact information you need to start reaching out.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Benefits -->
+      <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-i18n="landing.why_title">Why Lead Extractor?</h2>
+          </div>
+
+          <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white p-6 rounded-2xl shadow-card border border-gray-100">
+              <div class="text-3xl font-bold text-primary-600 mb-2">100%</div>
+              <div class="text-gray-600 font-medium" data-i18n="landing.benefit_free">Free & Open Source</div>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-card border border-gray-100">
+              <div class="text-3xl font-bold text-primary-600 mb-2" data-i18n="benefit.no">No</div>
+              <div class="text-gray-600 font-medium" data-i18n="landing.benefit_no_card">Credit Card Required</div>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-card border border-gray-100">
+              <div class="text-3xl font-bold text-primary-600 mb-2" data-i18n="benefit.your">Your</div>
+              <div class="text-gray-600 font-medium" data-i18n="landing.benefit_own_key">Own Google API Key</div>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-card border border-gray-100">
+              <div class="text-3xl font-bold text-primary-600 mb-2" data-i18n="benefit.self">Self</div>
+              <div class="text-gray-600 font-medium" data-i18n="landing.benefit_self_hosted">Hosted Option</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="py-20 bg-gradient-to-r from-primary-600 to-primary-800">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+          <h2 class="text-3xl md:text-4xl font-bold text-white mb-6" data-i18n="landing.cta_title">
+            Ready to find your next clients?
+          </h2>
+          <p class="text-xl text-primary-100 mb-8" data-i18n="landing.cta_desc">
+            Join thousands of agencies using Lead Extractor to grow their business.
+          </p>
+          <a
+            href="/register"
+            class="inline-block bg-white text-primary-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-primary-50 transition-colors shadow-lg"
+            data-i18n="landing.get_started"
+          >
+            Get Started Free
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 py-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <div class="flex items-center gap-2 mb-4 md:mb-0">
+            <div class="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <span class="text-white text-lg font-bold">Lead Extractor</span>
+          </div>
+          <div class="text-gray-400 text-sm" data-i18n="landing.footer_desc">
+            Self-hosted lead generation tool
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+</Layout>

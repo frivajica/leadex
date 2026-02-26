@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: api_server/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - DATABASE_URL=sqlite:///./data/leads.db
+      - SECRET_KEY=${SECRET_KEY:-changeme}
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:4321,http://localhost:5173
+      - APP_URL=http://localhost:3000
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: web/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  data:

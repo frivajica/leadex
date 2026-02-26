@@ -1,0 +1,52 @@
+# Dependency directories
+node_modules/
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Build outputs
+dist/
+.astro/
+build/
+bin/
+obj/
+out/
+
+# Environment files
+.env
+*.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+.project
+.settings/
+.classpath
+
+# Project specific
+data/
+result/
+.claude/
+**/node_modules/
+**/dist/
+**/.astro/
+**/.venv/
+**/__pycache__/
+*.pyc

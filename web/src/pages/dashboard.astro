@@ -1,0 +1,36 @@
+---
+import Layout from '../layouts/Layout.astro';
+import DashboardContent from '../components/DashboardContent';
+import Navigation from '../components/Navigation';
+
+const apiUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:8000';
+---
+
+<Layout title="Dashboard - Lead Extractor">
+  <div class="min-h-screen bg-gray-50">
+    <!-- Navigation -->
+    <Navigation client:load currentPath="/dashboard" />
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <DashboardContent client:load apiUrl={apiUrl} />
+    </main>
+  </div>
+
+  <div id="api-config" data-url={apiUrl} class="hidden"></div>
+
+  <script>
+    import { authApi } from '../lib/api';
+
+    const apiConfigEl = document.getElementById('api-config');
+
+    // Client-side auth check
+    async function checkAuth() {
+      try {
+        await authApi.me();
+      } catch {
+        window.location.href = '/login';
+      }
+    }
+    checkAuth();
+  </script>
+</Layout>
