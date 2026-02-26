@@ -41,7 +41,32 @@ async def create_new_job(
     request: CreateJobRequest,
     user: dict = Depends(require_auth),
 ):
-    """Create a new lead extraction job."""
+    # --- Subscription and Credit Logic ---
+    from datetime import datetime
+    
+    tier = user.get("subscription_tier", "free")
+    expires_at_str = user.get("subscription_expires_at")
+    has_active_sub = False
+    
+    if tier in ["week", "month"] and expires_at_str:
+        # Check if subscription is still valid
+        expires_at = datetime.fromisoformat(expires_at_str)
+        if expires_at > datetime.utcnow():
+            has_active_sub = True
+
+    if not has_active_sub:
+        credits = user.get("job_credits", 0)
+        if credits > 0:
+            from api_server.database import use_job_credit
+            # Attempt to consume a credit. Note: a race condition is possible here if the user fires multiple requests at the exact same millisecond.
+            # In a robust production app, use real DB transactions. The use_job_credit func uses an atomic UPDATE ... WHERE job_credits > 0.
+            credit_used = use_job_credit(user["id"])
+            if not credit_used:
+                raise HTTPException(status_code=402, detail="Payment required. Insufficient job credits.")
+        else:
+            raise HTTPException(status_code=402, detail="Payment required to create a new job.")
+
+    # --- Proceed with Job Creation ---
     job_id = create_job(
         user_id=user["id"],
         name=request.name,

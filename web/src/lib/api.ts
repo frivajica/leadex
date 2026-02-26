@@ -3,6 +3,9 @@ const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:8000';
 export interface User {
   id: number;
   email: string;
+  subscription_tier: 'free' | 'single' | 'week' | 'month';
+  subscription_expires_at: string | null;
+  job_credits: number;
 }
 
 export interface Job {
@@ -215,5 +218,13 @@ export const keysApi = {
   delete: (keyId: number) =>
     fetchApi<{ message: string }>(`/api/keys/${keyId}`, {
       method: 'DELETE',
+    }),
+};
+
+export const paymentsApi = {
+  checkout: (tier: 'single' | 'week' | 'month') =>
+    fetchApi<{ checkout_url: string }>('/api/payments/checkout', {
+      method: 'POST',
+      body: JSON.stringify({ tier }),
     }),
 };

@@ -8,3 +8,4 @@ pandas>=2.1.0
 python-dotenv>=1.0.0
 email-validator>=2.1.0
 passlib[bcrypt]>=1.7.4
+stripe>=8.0.0

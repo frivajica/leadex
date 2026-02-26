@@ -179,6 +179,9 @@ def get_current_user(request: Request = None, authorization: str = None) -> Opti
         return {
             "id": user["id"],
             "email": user["email"],
+            "subscription_tier": user.get("subscription_tier", "free"),
+            "subscription_expires_at": user.get("subscription_expires_at"),
+            "job_credits": user.get("job_credits", 0),
         }
 
     return None

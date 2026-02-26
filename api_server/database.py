@@ -39,6 +39,9 @@ def init_db():
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 email TEXT UNIQUE NOT NULL,
                 password_hash TEXT,
+                subscription_tier TEXT DEFAULT 'free',
+                subscription_expires_at TEXT,
+                job_credits INTEGER DEFAULT 0,
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL
             )
@@ -49,6 +52,14 @@ def init_db():
             cursor.execute("SELECT password_hash FROM users LIMIT 1")
         except sqlite3.OperationalError:
             cursor.execute("ALTER TABLE users ADD COLUMN password_hash TEXT")
+
+        # Migration: Add subscription columns if they don't exist
+        try:
+            cursor.execute("SELECT subscription_tier FROM users LIMIT 1")
+        except sqlite3.OperationalError:
+            cursor.execute("ALTER TABLE users ADD COLUMN subscription_tier TEXT DEFAULT 'free'")
+            cursor.execute("ALTER TABLE users ADD COLUMN subscription_expires_at TEXT")
+            cursor.execute("ALTER TABLE users ADD COLUMN job_credits INTEGER DEFAULT 0")
 
         # API keys table (user's own Google Maps API keys)
         cursor.execute("""
@@ -150,6 +161,43 @@ def update_user_password(user_id: int, password_hash: str) -> bool:
         cursor.execute(
             "UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?",
             (password_hash, now, user_id)
+        )
+        return cursor.rowcount > 0
+
+
+def update_user_subscription(user_id: int, tier: str) -> bool:
+    """Update user's subscription or job credits after payment."""
+    from datetime import timedelta
+    now = datetime.utcnow()
+    
+    with get_db_cursor() as cursor:
+        if tier == "single":
+            # Add one job credit
+            cursor.execute(
+                "UPDATE users SET job_credits = job_credits + 1, updated_at = ? WHERE id = ?",
+                (now.isoformat(), user_id)
+            )
+        elif tier == "week":
+            expires = (now + timedelta(days=7)).isoformat()
+            cursor.execute(
+                "UPDATE users SET subscription_tier = ?, subscription_expires_at = ?, updated_at = ? WHERE id = ?",
+                ("week", expires, now.isoformat(), user_id)
+            )
+        elif tier == "month":
+            expires = (now + timedelta(days=30)).isoformat()
+            cursor.execute(
+                "UPDATE users SET subscription_tier = ?, subscription_expires_at = ?, updated_at = ? WHERE id = ?",
+                ("month", expires, now.isoformat(), user_id)
+            )
+        return cursor.rowcount > 0
+
+def use_job_credit(user_id: int) -> bool:
+    """Consume one job credit if the user has any. Returns True if successful."""
+    now = datetime.utcnow().isoformat()
+    with get_db_cursor() as cursor:
+        cursor.execute(
+            "UPDATE users SET job_credits = job_credits - 1, updated_at = ? WHERE id = ? AND job_credits > 0",
+            (now, user_id)
         )
         return cursor.rowcount > 0
 

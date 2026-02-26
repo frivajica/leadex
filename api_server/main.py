@@ -9,7 +9,7 @@ load_dotenv()
 
 from api_server.database import init_db
 from api_server.auth import register_user, verify_magic_link, create_access_token, get_current_user, register_with_password, login_with_password
-from api_server.routes import jobs, results, keys, categories
+from api_server.routes import jobs, results, keys, categories, payments
 
 # Initialize database on startup
 @asynccontextmanager
@@ -55,6 +55,7 @@ app.include_router(jobs.router)
 app.include_router(results.router)
 app.include_router(keys.router)
 app.include_router(categories.router)
+app.include_router(payments.router)
 
 
 # Auth endpoints

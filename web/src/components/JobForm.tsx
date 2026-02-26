@@ -145,7 +145,13 @@ export default function JobForm() {
         window.location.href = `/jobs/${result.id}`;
       }, 1500);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('auth.error_generic'));
+      const errorMessage = err instanceof Error ? err.message : t('auth.error_generic');
+      // Intercept payment required error to redirect to Stripe Link checkout
+      if (errorMessage.toLowerCase().includes('payment required')) {
+        window.location.href = '/checkout';
+        return;
+      }
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -316,8 +322,8 @@ export default function JobForm() {
                 type="button"
                 onClick={() => toggleCategory(cat.id)}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${categories.includes(cat.id)
-                    ? 'bg-primary-600 text-white shadow-md'
-                    : 'bg-white text-gray-700 border border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                  ? 'bg-primary-600 text-white shadow-md'
+                  : 'bg-white text-gray-700 border border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                   }`}
               >
                 <span>{cat.icon}</span>
@@ -414,8 +420,8 @@ export default function JobForm() {
             type="button"
             onClick={() => setSortBy('score')}
             className={`flex items-center justify-center gap-2 p-3 border rounded-lg transition-colors ${sortBy === 'score'
-                ? 'border-primary-500 bg-primary-50 text-primary-700'
-                : 'border-gray-200 hover:border-gray-300'
+              ? 'border-primary-500 bg-primary-50 text-primary-700'
+              : 'border-gray-200 hover:border-gray-300'
               }`}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -427,8 +433,8 @@ export default function JobForm() {
             type="button"
             onClick={() => setSortBy('distance')}
             className={`flex items-center justify-center gap-2 p-3 border rounded-lg transition-colors ${sortBy === 'distance'
-                ? 'border-primary-500 bg-primary-50 text-primary-700'
-                : 'border-gray-200 hover:border-gray-300'
+              ? 'border-primary-500 bg-primary-50 text-primary-700'
+              : 'border-gray-200 hover:border-gray-300'
               }`}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
