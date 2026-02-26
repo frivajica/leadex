@@ -1,9 +1,9 @@
 import os
 import stripe
 from fastapi import APIRouter, Header, HTTPException, Request, Depends
-from typing import Optional, Dict, Any
+from typing import Dict, Any
 from ..auth import get_current_user
-from ..database import get_user_by_id, update_user
+from ..database import update_user_subscription
 
 # Initialize Stripe
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
