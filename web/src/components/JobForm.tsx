@@ -173,24 +173,7 @@ export default function JobForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* API Key Warning */}
-      {hasApiKey === false && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="flex items-start gap-3">
-            <div className="flex-shrink-0">
-              <svg className="w-5 h-5 text-yellow-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-yellow-800">{t('jobs.form.error_api_key_title')}</h3>
-              <p className="text-sm text-yellow-700">
-                {t('jobs.form.error_api_key_desc')}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+
 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
@@ -446,10 +429,58 @@ export default function JobForm() {
         </div>
       </div>
 
+      {/* Payment / API Key Choice */}
+      {hasApiKey === false && (
+        <div className="border-t border-gray-200 pt-6">
+          <label className="block text-sm font-medium text-gray-900 mb-4">
+            {t('jobs.form.process_choice', 'How would you like to process this job?')}
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <a
+              href="/settings"
+              className="relative flex flex-col p-4 border border-gray-200 rounded-xl hover:border-primary-500 hover:bg-primary-50 transition-colors cursor-pointer group"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center text-green-600">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                    </svg>
+                  </div>
+                  <span className="font-medium text-gray-900 group-hover:text-primary-700">Use Personal Key</span>
+                </div>
+                <span className="text-sm font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded">Free</span>
+              </div>
+              <p className="text-xs text-gray-500">
+                Add your Google Places API Key in Settings to extract unlimited leads for free.
+              </p>
+            </a>
+
+            <label className="relative flex flex-col p-4 border-2 border-primary-500 bg-primary-50 rounded-xl cursor-pointer">
+              <input type="radio" name="payment_choice" value="managed" checked readOnly className="sr-only" />
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-primary-200 flex items-center justify-center text-primary-700">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <span className="font-medium text-primary-900">Use Managed API</span>
+                </div>
+                <span className="w-4 h-4 rounded-full border-4 border-primary-600 bg-white"></span>
+              </div>
+              <p className="text-xs text-primary-700">
+                Zero setup. Pay via Stripe or use an existing subscription plan.
+              </p>
+            </label>
+          </div>
+        </div>
+      )}
+
       {/* Submit */}
       <button
         type="submit"
-        disabled={loading || hasApiKey === false}
+        disabled={loading}
         className="w-full flex justify-center items-center gap-2 py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
       >
         {loading ? (

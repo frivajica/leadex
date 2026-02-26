@@ -47,7 +47,7 @@ const currentLocale = cookieLang || (supported.includes(headerLang || '') ? head
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium mb-6">
             <span class="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></span>
-            <span data-i18n="landing.hero_badge">100% Free & Open Source</span>
+            <span data-i18n="landing.hero_badge">Free with your own Google Places API Key</span>
           </div>
           <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
             <span data-i18n="landing.hero_title">Extract Leads from</span><br />
@@ -61,7 +61,7 @@ const currentLocale = cookieLang || (supported.includes(headerLang || '') ? head
               href="/register"
               class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl text-lg font-semibold hover:from-primary-700 hover:to-primary-800 transition-all shadow-lg hover:shadow-xl"
             >
-              <span data-i18n="landing.start_free">Start Free</span>
+              <span data-i18n="landing.start_free">Start Extracting</span>
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
@@ -139,8 +139,8 @@ const currentLocale = cookieLang || (supported.includes(headerLang || '') ? head
 
           <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="bg-white p-6 rounded-2xl shadow-card border border-gray-100">
-              <div class="text-3xl font-bold text-primary-600 mb-2">100%</div>
-              <div class="text-gray-600 font-medium" data-i18n="landing.benefit_free">Free & Open Source</div>
+              <div class="text-3xl font-bold text-primary-600 mb-2">Free</div>
+              <div class="text-gray-600 font-medium" data-i18n="landing.benefit_free">With your own API key</div>
             </div>
             <div class="bg-white p-6 rounded-2xl shadow-card border border-gray-100">
               <div class="text-3xl font-bold text-primary-600 mb-2" data-i18n="benefit.no">No</div>
@@ -153,6 +153,82 @@ const currentLocale = cookieLang || (supported.includes(headerLang || '') ? head
             <div class="bg-white p-6 rounded-2xl shadow-card border border-gray-100">
               <div class="text-3xl font-bold text-primary-600 mb-2" data-i18n="benefit.self">Self</div>
               <div class="text-gray-600 font-medium" data-i18n="landing.benefit_self_hosted">Hosted Option</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pricing -->
+      <section id="pricing" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-i18n="landing.pricing_title">Simple, Flexible Pricing</h2>
+            <p class="text-lg text-gray-600 max-w-xl mx-auto" data-i18n="landing.pricing_subtitle">Choose the model that works best for your needs.</p>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <!-- Free / BYOK Tier -->
+            <div class="p-8 rounded-2xl bg-gray-50 border border-gray-200 shadow-sm flex flex-col items-center text-center">
+              <h3 class="text-2xl font-bold text-gray-900 mb-2">Self-Hosted / BYOK</h3>
+              <p class="text-gray-500 mb-6 font-medium">Bring Your Own Key</p>
+              <div class="text-4xl font-extrabold text-primary-600 mb-6">$0<span class="text-lg text-gray-500 font-medium">/mo</span></div>
+              
+              <ul class="text-left w-full space-y-4 mb-8">
+                <li class="flex items-start text-gray-700">
+                  <svg class="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Unlimited Extraction Jobs</span>
+                </li>
+                <li class="flex items-start text-gray-700">
+                  <svg class="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Use your own Google Cloud Billing</span>
+                </li>
+                <li class="flex items-start text-gray-500 text-sm mt-1 ml-8">
+                  (Google provides $200 free credit monthly)
+                </li>
+              </ul>
+              
+              <a href="/register" class="w-full py-4 px-6 bg-white border-2 border-primary-600 text-primary-700 rounded-xl font-bold hover:bg-primary-50 transition-colors mt-auto">
+                Start For Free
+              </a>
+            </div>
+
+            <!-- Managed / Paid Tier -->
+            <div class="p-8 rounded-2xl bg-gradient-to-b from-primary-900 to-primary-800 text-white shadow-xl flex flex-col items-center text-center relative overflow-hidden">
+               <div class="absolute top-0 right-0 bg-primary-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider">
+                Turnkey
+              </div>
+              <h3 class="text-2xl font-bold mb-2">Managed Service</h3>
+              <p class="text-primary-200 mb-6 font-medium">We handle everything</p>
+              <div class="text-4xl font-extrabold text-white mb-6">Starts at $4<span class="text-lg text-primary-300 font-medium">/job</span></div>
+              
+              <ul class="text-left w-full space-y-4 mb-8">
+                <li class="flex items-start text-primary-50">
+                  <svg class="h-6 w-6 text-primary-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Zero setup required</span>
+                </li>
+                 <li class="flex items-start text-primary-50">
+                  <svg class="h-6 w-6 text-primary-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>We handle Google API limits</span>
+                </li>
+                <li class="flex items-start text-primary-50 mt-1">
+                   <svg class="h-6 w-6 text-primary-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Flexible Subscriptions Available ($10/wk)</span>
+                </li>
+              </ul>
+              
+              <a href="/register" class="w-full py-4 px-6 bg-white text-primary-900 rounded-xl font-bold hover:bg-primary-50 transition-colors shadow-lg mt-auto">
+                View Managed Plans
+              </a>
             </div>
           </div>
         </div>
@@ -172,7 +248,7 @@ const currentLocale = cookieLang || (supported.includes(headerLang || '') ? head
             class="inline-block bg-white text-primary-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-primary-50 transition-colors shadow-lg"
             data-i18n="landing.get_started"
           >
-            Get Started Free
+            Get Started Now
           </a>
         </div>
       </section>

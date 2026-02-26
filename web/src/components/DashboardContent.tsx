@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { jobsApi, type Job } from '../lib/api';
+import { jobsApi, keysApi, type Job } from '../lib/api';
 import { useTranslation } from 'react-i18next';
 
 interface DashboardContentProps {
@@ -11,6 +11,7 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [hasApiKey, setHasApiKey] = useState<boolean | null>(null);
 
   useEffect(() => {
     loadJobs();
@@ -18,8 +19,12 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
 
   const loadJobs = async () => {
     try {
-      const data = await jobsApi.list(10, 0);
-      setJobs(data.jobs);
+      const [jobsData, keysData] = await Promise.all([
+        jobsApi.list(10, 0),
+        keysApi.list()
+      ]);
+      setJobs(jobsData.jobs);
+      setHasApiKey(keysData.keys.length > 0);
     } catch (err) {
       setError(err instanceof Error ? err.message : t('auth.error_generic'));
     } finally {
@@ -110,6 +115,51 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
         <h1 className="text-2xl font-bold text-gray-900">{t('dashboard.title')}</h1>
         <p className="text-gray-500 mt-1">{t('dashboard.desc')}</p>
       </div>
+
+      {/* Account Status Widget */}
+      {hasApiKey !== null && (
+        <div className="mb-8">
+          {hasApiKey ? (
+            <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start gap-3 shadow-sm">
+              <div className="flex-shrink-0 mt-0.5">
+                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-green-800">Free Tier Active</h3>
+                <p className="text-sm text-green-700 mt-1">
+                  You are using your personal Google Places API key. All lead extractions are free!
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 mt-0.5">
+                  <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-yellow-800">Action Required: Choose a Plan</h3>
+                  <p className="text-sm text-yellow-700 mt-1">
+                    Add your Google API Key (Free) or select a Managed Plan to start extracting.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-3 w-full sm:w-auto mt-2 sm:mt-0">
+                <a href="/settings" className="flex-1 sm:flex-none text-center px-4 py-2 bg-white text-yellow-700 border border-yellow-300 rounded-lg text-sm font-medium hover:bg-yellow-100 transition-colors shadow-sm">
+                  Add API Key
+                </a>
+                <a href="/checkout" className="flex-1 sm:flex-none text-center px-4 py-2 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 transition-colors shadow-sm">
+                  View Plans
+                </a>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="bg-white rounded-xl shadow-card p-5 border border-gray-100 hover:shadow-card-hover transition-shadow">
