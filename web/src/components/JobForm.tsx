@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
 import { jobsApi, keysApi, categoriesApi, type Category } from '../lib/api';
 import { useTranslation } from 'react-i18next';
+import '../lib/i18n';
 import i18n from '../lib/i18n';
 
 export default function JobForm() {
-  const { t } = useTranslation();
+  const { t, ready } = useTranslation();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -12,6 +13,11 @@ export default function JobForm() {
   const [categories, setCategories] = useState<string[]>([]);
   const [allCategories, setAllCategories] = useState<Category[] | null>(null);
   const [locationLoading, setLocationLoading] = useState(false);
+  const [query, setQuery] = useState('');
+  const [useGoogleKey, setUseGoogleKey] = useState<boolean | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
   const [showFilters, setShowFilters] = useState(false);
   const [hasApiKey, setHasApiKey] = useState<boolean | null>(null);
 
@@ -156,6 +162,10 @@ export default function JobForm() {
       setLoading(false);
     }
   };
+
+  if (!ready) return null;
+
+  if (!mounted) return null;
 
   if (success) {
     return (

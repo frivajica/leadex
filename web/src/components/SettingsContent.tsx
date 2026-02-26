@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { authApi, keysApi, type ApiKeys } from '../lib/api';
 import { useTranslation } from 'react-i18next';
+import '../lib/i18n';
 
 export default function SettingsContent() {
-  const { t } = useTranslation();
+  const { t, ready } = useTranslation();
   const [user, setUser] = useState<{ email: string } | null>(null);
   const [apiKeys, setApiKeys] = useState<ApiKeys[]>([]);
   const [newKeyName, setNewKeyName] = useState('');
@@ -12,8 +13,10 @@ export default function SettingsContent() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     loadData();
   }, []);
 
@@ -65,10 +68,11 @@ export default function SettingsContent() {
     }
   };
 
-  if (loading) {
+  if (!ready || !mounted || loading) {
     return (
-      <div className="flex justify-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className="flex flex-col items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mb-4"></div>
+        {ready && <p className="text-gray-500">{t('common.loading')}</p>}
       </div>
     );
   }

@@ -1,4 +1,6 @@
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import '../lib/i18n';
 import LanguageSwitcher from './LanguageSwitcher';
 import { authApi } from '../lib/api';
 
@@ -7,7 +9,12 @@ interface NavigationProps {
 }
 
 export default function Navigation({ currentPath }: NavigationProps) {
-	const { t } = useTranslation();
+	const { t, ready } = useTranslation();
+	const [mounted, setMounted] = useState(false);
+
+	useEffect(() => setMounted(true), []);
+
+	if (!ready || !mounted) return null;
 
 	const handleLogout = async () => {
 		try {

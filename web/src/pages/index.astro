@@ -1,45 +1,14 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import LanguageSwitcher from '../components/LanguageSwitcher';
+import Header from '../components/landing/Header.astro';
+import Footer from '../components/landing/Footer.astro';
 
-const cookieLang = Astro.cookies.get('i18next')?.value;
-const headerLang = Astro.request.headers.get('accept-language')?.split(',')[0].split('-')[0];
-const supported = ['en', 'es', 'fr'];
-const currentLocale = cookieLang || (supported.includes(headerLang || '') ? headerLang : 'en');
+const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
 ---
 
 <Layout title="Lead Extractor - Find Local Business Leads">
   <div class="min-h-screen">
-    <!-- Header -->
-    <header class="bg-white border-b border-gray-100">
-      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16 items-center">
-          <div class="flex items-center gap-2">
-            <div class="w-9 h-9 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-            <span class="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">Lead Extractor</span>
-          </div>
-          <div class="flex items-center gap-6">
-            <LanguageSwitcher client:load locale={currentLocale} />
-            <div class="flex items-center gap-3">
-              <a href="/login" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-i18n="auth.sign_in">
-                Sign In
-              </a>
-              <a
-                href="/register"
-                class="px-4 py-2 text-sm font-medium bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-lg hover:from-primary-700 hover:to-primary-800 transition-all shadow-md hover:shadow-lg"
-                data-i18n="landing.get_started"
-              >
-                Get Started
-              </a>
-            </div>
-          </div>
-        </div>
-      </nav>
-    </header>
+    <Header />
 
     <main>
       <!-- Hero -->
@@ -57,15 +26,27 @@ const currentLocale = cookieLang || (supported.includes(headerLang || '') ? head
             Find local businesses without websites - perfect for web design, SEO, and marketing agencies looking for new clients.
           </p>
           <div class="flex flex-col sm:flex-row justify-center gap-4">
-            <a
-              href="/register"
-              class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl text-lg font-semibold hover:from-primary-700 hover:to-primary-800 transition-all shadow-lg hover:shadow-xl"
-            >
-              <span data-i18n="landing.start_free">Start Extracting</span>
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </a>
+            {isLoggedIn ? (
+              <a
+                href="/dashboard"
+                class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl text-lg font-semibold hover:from-primary-700 hover:to-primary-800 transition-all shadow-lg hover:shadow-xl"
+              >
+                <span data-i18n="nav.dashboard">Go to Dashboard</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </a>
+            ) : (
+              <a
+                href="/register"
+                class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl text-lg font-semibold hover:from-primary-700 hover:to-primary-800 transition-all shadow-lg hover:shadow-xl"
+              >
+                <span data-i18n="landing.start_free">Start Extracting</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </a>
+            )}
             <a
               href="#features"
               class="inline-flex items-center justify-center px-8 py-4 bg-white text-gray-700 rounded-xl text-lg font-semibold border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all"
@@ -137,98 +118,35 @@ const currentLocale = cookieLang || (supported.includes(headerLang || '') ? head
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-i18n="landing.why_title">Why Lead Extractor?</h2>
           </div>
 
-          <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="bg-white p-6 rounded-2xl shadow-card border border-gray-100">
-              <div class="text-3xl font-bold text-primary-600 mb-2">Free</div>
-              <div class="text-gray-600 font-medium" data-i18n="landing.benefit_free">With your own API key</div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-card border border-gray-100">
-              <div class="text-3xl font-bold text-primary-600 mb-2" data-i18n="benefit.no">No</div>
-              <div class="text-gray-600 font-medium" data-i18n="landing.benefit_no_card">Credit Card Required</div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-card border border-gray-100">
-              <div class="text-3xl font-bold text-primary-600 mb-2" data-i18n="benefit.your">Your</div>
-              <div class="text-gray-600 font-medium" data-i18n="landing.benefit_own_key">Own Google API Key</div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-card border border-gray-100">
-              <div class="text-3xl font-bold text-primary-600 mb-2" data-i18n="benefit.self">Self</div>
-              <div class="text-gray-600 font-medium" data-i18n="landing.benefit_self_hosted">Hosted Option</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Pricing -->
-      <section id="pricing" class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-i18n="landing.pricing_title">Simple, Flexible Pricing</h2>
-            <p class="text-lg text-gray-600 max-w-xl mx-auto" data-i18n="landing.pricing_subtitle">Choose the model that works best for your needs.</p>
-          </div>
-
-          <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <!-- Free / BYOK Tier -->
-            <div class="p-8 rounded-2xl bg-gray-50 border border-gray-200 shadow-sm flex flex-col items-center text-center">
-              <h3 class="text-2xl font-bold text-gray-900 mb-2">Self-Hosted / BYOK</h3>
-              <p class="text-gray-500 mb-6 font-medium">Bring Your Own Key</p>
-              <div class="text-4xl font-extrabold text-primary-600 mb-6">$0<span class="text-lg text-gray-500 font-medium">/mo</span></div>
-              
-              <ul class="text-left w-full space-y-4 mb-8">
-                <li class="flex items-start text-gray-700">
-                  <svg class="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Unlimited Extraction Jobs</span>
-                </li>
-                <li class="flex items-start text-gray-700">
-                  <svg class="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Use your own Google Cloud Billing</span>
-                </li>
-                <li class="flex items-start text-gray-500 text-sm mt-1 ml-8">
-                  (Google provides $200 free credit monthly)
-                </li>
-              </ul>
-              
-              <a href="/register" class="w-full py-4 px-6 bg-white border-2 border-primary-600 text-primary-700 rounded-xl font-bold hover:bg-primary-50 transition-colors mt-auto">
-                Start For Free
-              </a>
-            </div>
-
-            <!-- Managed / Paid Tier -->
-            <div class="p-8 rounded-2xl bg-gradient-to-b from-primary-900 to-primary-800 text-white shadow-xl flex flex-col items-center text-center relative overflow-hidden">
-               <div class="absolute top-0 right-0 bg-primary-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider">
-                Turnkey
+          <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
+              <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-6">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
               </div>
-              <h3 class="text-2xl font-bold mb-2">Managed Service</h3>
-              <p class="text-primary-200 mb-6 font-medium">We handle everything</p>
-              <div class="text-4xl font-extrabold text-white mb-6">Starts at $4<span class="text-lg text-primary-300 font-medium">/job</span></div>
-              
-              <ul class="text-left w-full space-y-4 mb-8">
-                <li class="flex items-start text-primary-50">
-                  <svg class="h-6 w-6 text-primary-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Zero setup required</span>
-                </li>
-                 <li class="flex items-start text-primary-50">
-                  <svg class="h-6 w-6 text-primary-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>We handle Google API limits</span>
-                </li>
-                <li class="flex items-start text-primary-50 mt-1">
-                   <svg class="h-6 w-6 text-primary-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Flexible Subscriptions Available ($10/wk)</span>
-                </li>
-              </ul>
-              
-              <a href="/register" class="w-full py-4 px-6 bg-white text-primary-900 rounded-xl font-bold hover:bg-primary-50 transition-colors shadow-lg mt-auto">
-                View Managed Plans
-              </a>
+              <h3 class="text-xl font-bold text-gray-900 mb-4">Unbeatable Cost Control</h3>
+              <p class="text-gray-600 leading-relaxed">Stop paying expensive monthly subscriptions per lead. Use your own Google Cloud key for practically free extraction, or use our low-cost managed service.</p>
+            </div>
+            
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
+              <div class="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center mb-6">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-4">Fresh, High-Intent Data</h3>
+              <p class="text-gray-600 leading-relaxed">Scrape directly from Google Maps in real-time. Target businesses that explicitly lack websites—the perfect prospects for web design and marketing agencies.</p>
+            </div>
+            
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
+              <div class="w-16 h-16 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center mb-6">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-4">Lead Scoring & Filtering</h3>
+              <p class="text-gray-600 leading-relaxed">We don't just dump basic data. We score leads based on profile completeness, reviews, and ratings so you can prioritize your outreach.</p>
             </div>
           </div>
         </div>
@@ -243,35 +161,28 @@ const currentLocale = cookieLang || (supported.includes(headerLang || '') ? head
           <p class="text-xl text-primary-100 mb-8" data-i18n="landing.cta_desc">
             Join thousands of agencies using Lead Extractor to grow their business.
           </p>
-          <a
-            href="/register"
-            class="inline-block bg-white text-primary-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-primary-50 transition-colors shadow-lg"
-            data-i18n="landing.get_started"
-          >
-            Get Started Now
-          </a>
+          {isLoggedIn ? (
+            <a
+              href="/dashboard"
+              class="inline-block bg-white text-primary-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-primary-50 transition-colors shadow-lg"
+              data-i18n="nav.dashboard"
+            >
+              Go to Dashboard
+            </a>
+          ) : (
+            <a
+              href="/register"
+              class="inline-block bg-white text-primary-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-primary-50 transition-colors shadow-lg"
+              data-i18n="landing.get_started"
+            >
+              Get Started Now
+            </a>
+          )}
         </div>
       </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 py-12">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row justify-between items-center">
-          <div class="flex items-center gap-2 mb-4 md:mb-0">
-            <div class="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-            <span class="text-white text-lg font-bold">Lead Extractor</span>
-          </div>
-          <div class="text-gray-400 text-sm" data-i18n="landing.footer_desc">
-            Self-hosted lead generation tool
-          </div>
-        </div>
-      </div>
-    </footer>
+    <Footer />
 
   </div>
 </Layout>

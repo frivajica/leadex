@@ -1,0 +1,104 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/landing/Header.astro';
+import Footer from '../components/landing/Footer.astro';
+
+const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
+---
+
+<Layout title="Pricing & Plans - Lead Extractor">
+  <div class="min-h-screen flex flex-col">
+    <Header />
+
+    <main class="flex-grow">
+      <section id="pricing" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-i18n="landing.pricing_title">Simple, Flexible Pricing</h2>
+            <p class="text-lg text-gray-600 max-w-xl mx-auto" data-i18n="landing.pricing_subtitle">Choose the model that works best for your needs.</p>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <!-- Free / BYOK Tier -->
+            <div class="p-8 rounded-2xl bg-gray-50 border border-gray-200 shadow-sm flex flex-col items-center text-center">
+              <h3 class="text-2xl font-bold text-gray-900 mb-2">Self-Hosted / BYOK</h3>
+              <p class="text-gray-500 mb-6 font-medium">Bring Your Own Key</p>
+              <div class="text-4xl font-extrabold text-primary-600 mb-6">$0<span class="text-lg text-gray-500 font-medium">/mo</span></div>
+              
+              <ul class="text-left w-full space-y-4 mb-8">
+                <li class="flex items-start text-gray-700">
+                  <svg class="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Unlimited Extraction Jobs</span>
+                </li>
+                <li class="flex items-start text-gray-700">
+                  <svg class="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Use your own Google Cloud Billing</span>
+                </li>
+                <li class="flex items-start text-gray-500 text-sm mt-1 ml-8">
+                  (Google provides $200 free credit monthly)
+                </li>
+              </ul>
+              
+              {isLoggedIn ? (
+                <a href="/dashboard" class="w-full py-4 px-6 bg-white border-2 border-primary-600 text-primary-700 rounded-xl font-bold hover:bg-primary-50 transition-colors mt-auto">
+                  Go to Dashboard
+                </a>
+              ) : (
+                <a href="/register" class="w-full py-4 px-6 bg-white border-2 border-primary-600 text-primary-700 rounded-xl font-bold hover:bg-primary-50 transition-colors mt-auto">
+                  Start For Free
+                </a>
+              )}
+            </div>
+
+            <!-- Managed / Paid Tier -->
+            <div class="p-8 rounded-2xl bg-gradient-to-b from-primary-900 to-primary-800 text-white shadow-xl flex flex-col items-center text-center relative overflow-hidden">
+               <div class="absolute top-0 right-0 bg-primary-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider">
+                Turnkey
+              </div>
+              <h3 class="text-2xl font-bold mb-2">Managed Service</h3>
+              <p class="text-primary-200 mb-6 font-medium">We handle everything</p>
+              <div class="text-4xl font-extrabold text-white mb-6">Starts at $4<span class="text-lg text-primary-300 font-medium">/job</span></div>
+              
+              <ul class="text-left w-full space-y-4 mb-8">
+                <li class="flex items-start text-primary-50">
+                  <svg class="h-6 w-6 text-primary-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Zero setup required</span>
+                </li>
+                 <li class="flex items-start text-primary-50">
+                  <svg class="h-6 w-6 text-primary-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>We handle Google API limits</span>
+                </li>
+                <li class="flex items-start text-primary-50 mt-1">
+                   <svg class="h-6 w-6 text-primary-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Flexible Subscriptions Available ($10/wk)</span>
+                </li>
+              </ul>
+              
+              {isLoggedIn ? (
+                <a href="/checkout" class="w-full py-4 px-6 bg-white text-primary-900 rounded-xl font-bold hover:bg-primary-50 transition-colors shadow-lg mt-auto">
+                  Get Started
+                </a>
+              ) : (
+                <a href="/register" class="w-full py-4 px-6 bg-white text-primary-900 rounded-xl font-bold hover:bg-primary-50 transition-colors shadow-lg mt-auto">
+                  View Managed Plans
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <Footer />
+  </div>
+</Layout>

@@ -10,12 +10,9 @@ interface AuthFormProps {
 }
 
 export default function AuthForm({ action, locale }: AuthFormProps) {
-  const { t, i18n: i18nInstance } = useTranslation();
+  const { t, i18n: i18nInstance, ready } = useTranslation();
 
-  // Sync with Astro's detected locale ONLY on server or initial mount
-  if (typeof window === 'undefined' && locale && i18nInstance.language !== locale) {
-    i18nInstance.changeLanguage(locale);
-  }
+  // Safe global client-side change runs in useEffect
 
   useEffect(() => {
     if (locale && i18nInstance.language !== locale) {
@@ -78,6 +75,8 @@ export default function AuthForm({ action, locale }: AuthFormProps) {
       setLoading(false);
     }
   };
+
+  if (!ready) return null;
 
   if (success) {
     return (

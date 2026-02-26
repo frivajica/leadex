@@ -7,8 +7,11 @@ interface LanguageSwitcherProps {
 }
 
 export default function LanguageSwitcher({ locale }: LanguageSwitcherProps) {
-	const { i18n } = useTranslation();
+	const { i18n, ready } = useTranslation();
 	const [activeLanguage, setActiveLanguage] = useState(locale || '');
+	const [mounted, setMounted] = useState(false);
+
+	useEffect(() => setMounted(true), []);
 
 	const languages = [
 		{ code: "en", name: "English", flag: "🇺🇸" },
@@ -19,6 +22,8 @@ export default function LanguageSwitcher({ locale }: LanguageSwitcherProps) {
 	useEffect(() => {
 		setActiveLanguage(i18n.language?.split("-")[0] || "en");
 	}, [i18n.language]);
+
+	if (!ready || !mounted) return null;
 
 	const changeLanguage = async (code: string) => {
 		await i18n.changeLanguage(code);

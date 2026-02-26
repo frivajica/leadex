@@ -1,19 +1,22 @@
 import { useState, useEffect } from 'react';
 import { jobsApi, keysApi, type Job } from '../lib/api';
 import { useTranslation } from 'react-i18next';
+import '../lib/i18n';
 
 interface DashboardContentProps {
   apiUrl?: string;
 }
 
 export default function DashboardContent({ apiUrl }: DashboardContentProps) {
-  const { t } = useTranslation();
+  const { t, ready } = useTranslation();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [hasApiKey, setHasApiKey] = useState<boolean | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     loadJobs();
   }, []);
 
@@ -80,7 +83,7 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
     }
   };
 
-  if (loading) {
+  if (!ready || !mounted || loading) {
     return (
       <div className="flex items-center justify-center py-20">
         <div className="text-center">

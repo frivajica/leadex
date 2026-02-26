@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { jobsApi, resultsApi, type Job, type Lead } from '../lib/api';
 import { useTranslation } from 'react-i18next';
+import '../lib/i18n';
 
 interface JobDetailsProps {
   jobId: number;
@@ -8,11 +9,14 @@ interface JobDetailsProps {
 }
 
 export default function JobDetails({ jobId, apiUrl }: JobDetailsProps) {
-  const { t } = useTranslation();
+  const { t, ready } = useTranslation();
   const [job, setJob] = useState<Job | null>(null);
   const [results, setResults] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
   const [sortColumn, setSortColumn] = useState<'score' | 'name' | 'rating' | 'distance'>('score');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [filterText, setFilterText] = useState('');
@@ -170,7 +174,7 @@ export default function JobDetails({ jobId, apiUrl }: JobDetailsProps) {
     });
   }, [filteredResults, sortColumn, sortDirection]);
 
-  if (loading) {
+  if (!mounted || loading) {
     return (
       <div className="flex justify-center py-12">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
