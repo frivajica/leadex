@@ -12,7 +12,7 @@ from api_server.auth import get_current_user
 def require_auth(user=Depends(get_current_user)) -> dict:
     """Require authentication."""
     if not user:
-        raise HTTPException(status_code=401, detail="Not authenticated")
+        raise HTTPException(status_code=401, detail="Please log in to view categories.")
     return user
 
 router = APIRouter(prefix="/api", tags=["categories"])

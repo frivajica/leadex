@@ -18,7 +18,7 @@ router = APIRouter(prefix="/api/jobs", tags=["jobs"])
 def require_auth(user=Depends(get_current_user)) -> dict:
     """Require authentication."""
     if not user:
-        raise HTTPException(status_code=401, detail="Not authenticated")
+        raise HTTPException(status_code=401, detail="Please log in to manage your jobs.")
     return user
 
 
@@ -121,7 +121,7 @@ async def get_job_details(
     job = get_job(job_id, user["id"])
 
     if not job:
-        raise HTTPException(status_code=404, detail="Job not found")
+        raise HTTPException(status_code=404, detail="We couldn't find this job. It may have been deleted.")
 
     return job
 
@@ -145,7 +145,7 @@ async def remove_job(
     success = delete_job(job_id, user["id"])
 
     if not success:
-        raise HTTPException(status_code=500, detail="Failed to delete job")
+        raise HTTPException(status_code=500, detail="We encountered an issue deleting your job. Please try again.")
 
     return {"message": "Job deleted successfully"}
 
@@ -159,15 +159,15 @@ async def cancel_job(
     job = get_job(job_id, user["id"])
 
     if not job:
-        raise HTTPException(status_code=404, detail="Job not found")
+        raise HTTPException(status_code=404, detail="We couldn't find this job to cancel it.")
 
     if job["status"] != "running":
-        raise HTTPException(status_code=400, detail="Job is not running")
+        raise HTTPException(status_code=400, detail="This job is not currently running.")
 
     success = extractor_service.cancel_job(job_id)
 
     if not success:
-        raise HTTPException(status_code=500, detail="Failed to cancel job")
+        raise HTTPException(status_code=500, detail="We couldn't cancel the job right now. Please try again.")
 
     return {"message": "Job cancelled successfully"}
 
@@ -181,10 +181,10 @@ async def restart_job(
     job = get_job(job_id, user["id"])
 
     if not job:
-        raise HTTPException(status_code=404, detail="Job not found")
+        raise HTTPException(status_code=404, detail="We couldn't find this job. It may have been deleted.")
 
     if job["status"] not in ["failed", "cancelled"]:
-        raise HTTPException(status_code=400, detail="Only failed or cancelled jobs can be restarted")
+        raise HTTPException(status_code=400, detail="Only jobs that have failed or been cancelled can be restarted.")
 
     # Update status to queued
     from api_server.database import update_job_status

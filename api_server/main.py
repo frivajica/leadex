@@ -86,7 +86,7 @@ class TokenRequest(BaseModel):
 async def register(request: EmailRequest):
     """Register a new user and send magic link."""
     if not request.email or "@" not in request.email:
-        raise HTTPException(status_code=400, detail="Valid email is required")
+        raise HTTPException(status_code=400, detail="Please provide a valid email address to continue.")
 
     success, message = register_user(request.email, redirect_url=request.redirect_url)
 
@@ -106,13 +106,13 @@ async def login(request: EmailRequest):
 async def register_password(request: PasswordRegisterRequest):
     """Register a new user with email and password."""
     if not request.email or "@" not in request.email:
-        raise HTTPException(status_code=400, detail="Valid email is required")
+        raise HTTPException(status_code=400, detail="Please provide a valid email address to register.")
 
     if not request.password or len(request.password) < 8:
-        raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
+        raise HTTPException(status_code=400, detail="Your password must be at least 8 characters long for security.")
 
     if len(request.password.encode("utf-8")) > 72:
-        raise HTTPException(status_code=400, detail="Password cannot be longer than 72 bytes")
+        raise HTTPException(status_code=400, detail="Your password is too long. Please use a password under 72 characters.")
 
     success, message, user = register_with_password(request.email, request.password)
 
@@ -153,10 +153,10 @@ async def register_password(request: PasswordRegisterRequest):
 async def login_password(request: PasswordLoginRequest):
     """Login with email and password."""
     if not request.email or not request.password:
-        raise HTTPException(status_code=400, detail="Email and password are required")
+        raise HTTPException(status_code=400, detail="Please provide both your email and password to log in.")
 
     if len(request.password.encode("utf-8")) > 72:
-        raise HTTPException(status_code=400, detail="Password cannot be longer than 72 bytes")
+        raise HTTPException(status_code=400, detail="Your password is too long. Please use a password under 72 characters.")
 
     success, message, user = login_with_password(request.email, request.password)
 
@@ -199,7 +199,7 @@ async def verify(request: TokenRequest):
     user = verify_magic_link(request.token)
 
     if not user:
-        raise HTTPException(status_code=400, detail="Invalid or expired magic link")
+        raise HTTPException(status_code=400, detail="This login link has expired or is invalid. Please request a new one.")
 
     token_data = create_access_token(user["id"], user["email"])
 
@@ -235,7 +235,7 @@ async def verify(request: TokenRequest):
 async def get_me(user=Depends(get_current_user)):
     """Get current user info."""
     if not user:
-        raise HTTPException(status_code=401, detail="Not authenticated")
+        raise HTTPException(status_code=401, detail="Please log in to access your account.")
     return user
 
 

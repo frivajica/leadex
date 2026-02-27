@@ -15,7 +15,7 @@ router = APIRouter(prefix="/api/keys", tags=["keys"])
 def require_auth(user=Depends(get_current_user)) -> dict:
     """Require authentication."""
     if not user:
-        raise HTTPException(status_code=401, detail="Not authenticated")
+        raise HTTPException(status_code=401, detail="Please log in to manage your API keys.")
     return user
 
 
@@ -41,7 +41,7 @@ async def add_key(
 ):
     """Add a new API key."""
     if not request.api_key:
-        raise HTTPException(status_code=400, detail="API key is required")
+        raise HTTPException(status_code=400, detail="Please provide an API key to save.")
 
     key_id = create_api_key(user["id"], request.key_name, request.api_key)
 
@@ -61,6 +61,6 @@ async def remove_key(
     success = delete_api_key(user["id"], key_id)
 
     if not success:
-        raise HTTPException(status_code=404, detail="API key not found")
+        raise HTTPException(status_code=404, detail="We couldn't find an API key to delete.")
 
     return {"message": "API key deleted successfully"}

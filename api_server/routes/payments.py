@@ -47,7 +47,7 @@ async def create_checkout_session(request: Request, data: Dict[str, Any], user=D
     """Create a Stripe Checkout Session."""
     tier = data.get("tier")
     if tier not in ["single", "week", "month"]:
-        raise HTTPException(status_code=400, detail="Invalid tier selection")
+        raise HTTPException(status_code=400, detail="The selected subscription plan is invalid. Please try another option.")
 
     currency = get_currency_from_request(request)
     
@@ -100,7 +100,7 @@ async def create_checkout_session(request: Request, data: Dict[str, Any], user=D
         )
         return {"checkout_url": checkout_session.url}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"There was a problem generating the payment link: {str(e)}")
 
 @router.post("/api/payments/webhook")
 async def stripe_webhook(request: Request):
