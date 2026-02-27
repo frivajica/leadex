@@ -17,17 +17,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	const token = cookies.get('access_token');
 	const isAuthenticated = !!token?.value;
 
-	console.log(`[Middleware] ${path} - Authenticated: ${isAuthenticated}`);
-
 	// 1. If trying to access a protected route without auth, redirect to login
 	if (!isAuthenticated && !isPublic) {
-		console.log(`[Middleware] Redirecting to /login from ${path}`);
 		return redirect('/login');
 	}
 
 	// 2. If trying to access login/register while authenticated, redirect to dashboard
 	if (isAuthenticated && isGuestOnly) {
-		console.log(`[Middleware] Redirecting to /dashboard from ${path}`);
 		return redirect('/dashboard');
 	}
 

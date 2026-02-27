@@ -3,8 +3,17 @@ import { authApi, keysApi, type ApiKeys, type User } from '../lib/api';
 import { useTranslation } from 'react-i18next';
 import '../lib/i18n';
 
-export default function SettingsContent() {
-  const { t, ready } = useTranslation();
+interface SettingsContentProps {
+  lang?: string;
+}
+
+export default function SettingsContent({ lang }: SettingsContentProps) {
+  const { t, ready, i18n } = useTranslation();
+
+  // Synchronize language during SSR and on first mount
+  if (lang && i18n.language !== lang) {
+    i18n.changeLanguage(lang);
+  }
   const [user, setUser] = useState<User | null>(null);
   const [apiKeys, setApiKeys] = useState<ApiKeys[]>([]);
   const [newKeyName, setNewKeyName] = useState('');

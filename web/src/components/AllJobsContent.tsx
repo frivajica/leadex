@@ -5,8 +5,17 @@ import '../lib/i18n';
 
 const PAGE_SIZE = 10;
 
-export default function AllJobsContent() {
-	const { t, ready } = useTranslation();
+interface AllJobsContentProps {
+	lang?: string;
+}
+
+export default function AllJobsContent({ lang }: AllJobsContentProps) {
+	const { t, ready, i18n } = useTranslation();
+
+	// Synchronize language during SSR and on first mount
+	if (lang && i18n.language !== lang) {
+		i18n.changeLanguage(lang);
+	}
 	const [jobs, setJobs] = useState<Job[]>([]);
 	const [total, setTotal] = useState(0);
 	const [loading, setLoading] = useState(true);

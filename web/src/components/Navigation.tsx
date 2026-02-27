@@ -6,11 +6,17 @@ import { authApi } from '../lib/api';
 
 interface NavigationProps {
 	currentPath: string;
+	lang?: string;
 }
 
-export default function Navigation({ currentPath }: NavigationProps) {
-	const { t, ready } = useTranslation();
+export default function Navigation({ currentPath, lang }: NavigationProps) {
+	const { t, ready, i18n } = useTranslation();
 	const [mounted, setMounted] = useState(false);
+
+	// Synchronize language during SSR and on first mount
+	if (lang && i18n.language !== lang) {
+		i18n.changeLanguage(lang);
+	}
 
 	useEffect(() => setMounted(true), []);
 

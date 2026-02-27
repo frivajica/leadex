@@ -10,10 +10,10 @@ const t = getT(locale);
 
 <Layout title={`${t('nav.all_jobs')} - Lead Extractor`}>
   <div class="min-h-screen bg-gray-50">
-    <Navigation client:load currentPath="/jobs" />
+    <Navigation client:load currentPath="/jobs" lang={locale} />
 
     <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <AllJobsContent client:load />
+      <AllJobsContent client:load lang={locale} />
     </main>
   </div>
 </Layout>

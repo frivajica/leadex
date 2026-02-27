@@ -11,7 +11,7 @@ const t = getT(locale);
 <Layout title={`${t('jobs.new_job_title')} - Lead Extractor`}>
   <div class="min-h-screen bg-gray-50">
     <!-- Navigation -->
-    <Navigation client:load currentPath="/jobs/new" />
+    <Navigation client:load currentPath="/jobs/new" lang={locale} />
 
     <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="mb-6">
@@ -25,7 +25,7 @@ const t = getT(locale);
 
       <div class="bg-white rounded-2xl shadow-card p-6 border border-gray-100">
         <h1 class="text-2xl font-bold text-gray-900 mb-6">{t('jobs.new_job_title')}</h1>
-        <JobForm client:load />
+        <JobForm client:load lang={locale} />
       </div>
     </main>
   </div>

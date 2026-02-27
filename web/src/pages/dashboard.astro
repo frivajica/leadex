@@ -12,10 +12,10 @@ const apiUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:8000';
 <Layout title={`${t('nav.dashboard')} - Lead Extractor`}>
   <div class="min-h-screen bg-gray-50">
     <!-- Navigation -->
-    <Navigation client:load currentPath="/dashboard" />
+    <Navigation client:load currentPath="/dashboard" lang={locale} />
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <DashboardContent client:load apiUrl={apiUrl} />
+      <DashboardContent client:load apiUrl={apiUrl} lang={locale} />
     </main>
   </div>
 

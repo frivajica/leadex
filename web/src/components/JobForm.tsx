@@ -8,8 +8,17 @@ enum LocationMode {
   Manual = 'manual',
 }
 
-export default function JobForm() {
-  const { t, ready } = useTranslation();
+interface JobFormProps {
+  lang?: string;
+}
+
+export default function JobForm({ lang }: JobFormProps) {
+  const { t, ready, i18n } = useTranslation();
+
+  // Synchronize language during SSR and on first mount
+  if (lang && i18n.language !== lang) {
+    i18n.changeLanguage(lang);
+  }
   const errorRef = useRef<HTMLDivElement>(null);
 
   // UI state

@@ -5,10 +5,16 @@ import '../lib/i18n';
 
 interface DashboardContentProps {
   apiUrl?: string;
+  lang?: string;
 }
 
-export default function DashboardContent({ apiUrl }: DashboardContentProps) {
-  const { t, ready } = useTranslation();
+export default function DashboardContent({ apiUrl, lang }: DashboardContentProps) {
+  const { t, ready, i18n } = useTranslation();
+
+  // Synchronize language during SSR and on first mount
+  if (lang && i18n.language !== lang) {
+    i18n.changeLanguage(lang);
+  }
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -31,9 +37,6 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
       setJobs(jobsData.jobs);
       setHasApiKey(keysData.keys.length > 0);
       setUser(userData);
-      console.log('[Dashboard] User data loaded:', userData);
-      console.log('[Dashboard] Managed plan?', userData.subscription_tier !== 'free');
-      console.log('[Dashboard] Credits?', userData.job_credits);
     } catch (err: any) {
       console.error('[Dashboard] Failed to load data:', err);
       const errorMessage = typeof err === 'string' ? err : (err.detail || err.message || 'error.generic');

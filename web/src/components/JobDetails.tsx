@@ -6,10 +6,16 @@ import '../lib/i18n';
 interface JobDetailsProps {
   jobId: number;
   apiUrl: string;
+  lang?: string;
 }
 
-export default function JobDetails({ jobId, apiUrl }: JobDetailsProps) {
-  const { t } = useTranslation();
+export default function JobDetails({ jobId, apiUrl, lang }: JobDetailsProps) {
+  const { t, ready, i18n } = useTranslation();
+
+  // Synchronize language during SSR and on first mount
+  if (lang && i18n.language !== lang) {
+    i18n.changeLanguage(lang);
+  }
   const [job, setJob] = useState<Job | null>(null);
   const [results, setResults] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
