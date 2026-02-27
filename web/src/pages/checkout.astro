@@ -1,9 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
 ---
 
 <Layout title="Checkout - Lead Extractor">
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12" data-logged-in={isLoggedIn ? 'true' : 'false'} id="checkout-container">
     <div class="text-center mb-12 animate-fade-in">
       <h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
         Choose Your Access Plan
@@ -208,6 +210,14 @@ import Layout from '../layouts/Layout.astro';
       const target = e.currentTarget as HTMLButtonElement;
       const tier = target.getAttribute('data-checkout-tier') as 'single' | 'week' | 'month';
       
+      const container = document.getElementById('checkout-container');
+      const isLoggedIn = container?.getAttribute('data-logged-in') === 'true';
+
+      if (!isLoggedIn) {
+        window.location.href = `/register?redirect=/checkout`;
+        return;
+      }
+
       const loadingEl = document.getElementById('checkout-loading');
       if (loadingEl) {
         loadingEl.classList.remove('hidden');

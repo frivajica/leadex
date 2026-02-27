@@ -86,7 +86,7 @@ const currentLocale = cookieLang || (supported.includes(headerLang || '') ? head
           <h2 class="text-2xl font-bold text-gray-900 text-center mb-2" data-i18n="auth.create_account">Create your account</h2>
           <p class="text-gray-500 text-center mb-8" data-i18n="auth.register_desc">Start extracting leads in minutes</p>
 
-          <AuthForm client:load action="register" locale={currentLocale} />
+          <AuthForm client:load action="register" locale={currentLocale} redirectUrl={Astro.url.searchParams.get('redirect')} />
         </div>
 
         <p class="mt-6 text-center text-sm text-gray-500">

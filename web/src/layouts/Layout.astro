@@ -107,7 +107,7 @@ if (!cookieLang) {
 
       // Auth redirection fallback
       function checkAuthRedirect() {
-        const publicRoutes = ['/', '/login', '/register', '/auth/verify'];
+        const publicRoutes = ['/', '/login', '/register', '/auth/verify', '/pricing', '/checkout'];
         const path = window.location.pathname.replace(/\/$/, '') || '/';
         const isPublic = publicRoutes.includes(path) || path.startsWith('/locales/') || path === '/favicon.svg';
         

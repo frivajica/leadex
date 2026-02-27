@@ -4,7 +4,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	const { url, cookies, redirect } = context;
 
 	// Define route lists
-	const publicRoutes = ['/', '/login', '/register', '/auth/verify'];
+	const publicRoutes = ['/', '/login', '/register', '/auth/verify', '/pricing', '/checkout'];
 	const guestOnlyRoutes = ['/login', '/register'];
 
 	// Normalize path: ignore trailing slash

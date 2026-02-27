@@ -79,8 +79,9 @@ const apiUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:8000';
 
       showSuccess();
 
+      const redirectUrl = urlParams.get('redirect');
       setTimeout(() => {
-        window.location.href = '/dashboard';
+        window.location.href = redirectUrl || '/dashboard';
       }, 1500);
     } catch (err) {
       showError('auth.error_generic');

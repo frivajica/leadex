@@ -7,9 +7,10 @@ import i18n from '../lib/i18n';
 interface AuthFormProps {
   action: 'login' | 'register';
   locale?: string;
+  redirectUrl?: string | null;
 }
 
-export default function AuthForm({ action, locale }: AuthFormProps) {
+export default function AuthForm({ action, locale, redirectUrl }: AuthFormProps) {
   const { t, i18n: i18nInstance, ready } = useTranslation();
 
   // Safe global client-side change runs in useEffect
@@ -60,12 +61,12 @@ export default function AuthForm({ action, locale }: AuthFormProps) {
         } else {
           await authApi.loginPassword(email, password);
         }
-        window.location.href = '/dashboard';
+        window.location.href = redirectUrl || '/dashboard';
       } else {
         if (action === 'register') {
-          await authApi.register(email);
+          await authApi.register(email, redirectUrl || undefined);
         } else {
-          await authApi.login(email);
+          await authApi.login(email, redirectUrl || undefined);
         }
         setSuccess(true);
       }

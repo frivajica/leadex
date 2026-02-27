@@ -68,7 +68,7 @@ If you didn't request this, please ignore this email.
         return False
 
 
-def register_user(email: str) -> tuple[bool, str]:
+def register_user(email: str, redirect_url: Optional[str] = None) -> tuple[bool, str]:
     """Register a new user or return existing user."""
     user = get_user_by_email(email)
 
@@ -84,6 +84,9 @@ def register_user(email: str) -> tuple[bool, str]:
     create_magic_link(user_id, token, expires_at)
 
     magic_link = f"{APP_URL}/auth/verify?token={token}"
+    if redirect_url:
+        import urllib.parse
+        magic_link += f"&redirect={urllib.parse.quote(redirect_url)}"
 
     # Send email
     success = send_magic_link_email(email, magic_link)

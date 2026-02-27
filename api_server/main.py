@@ -1,4 +1,5 @@
 import os
+from typing import Optional, List, Union
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -64,6 +65,7 @@ from pydantic import BaseModel
 
 class EmailRequest(BaseModel):
     email: str
+    redirect_url: Optional[str] = None
 
 
 class PasswordLoginRequest(BaseModel):
@@ -86,7 +88,7 @@ async def register(request: EmailRequest):
     if not request.email or "@" not in request.email:
         raise HTTPException(status_code=400, detail="Valid email is required")
 
-    success, message = register_user(request.email)
+    success, message = register_user(request.email, redirect_url=request.redirect_url)
 
     if not success:
         raise HTTPException(status_code=500, detail=message)

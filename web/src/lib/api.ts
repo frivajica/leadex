@@ -70,16 +70,16 @@ async function fetchApi<T>(
 }
 
 export const authApi = {
-  register: (email: string) =>
+  register: (email: string, redirect_url?: string) =>
     fetchApi<{ message: string }>('/api/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email, redirect_url }),
     }),
 
-  login: (email: string) =>
+  login: (email: string, redirect_url?: string) =>
     fetchApi<{ message: string }>('/api/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email, redirect_url }),
     }),
 
   verify: (token: string) =>
