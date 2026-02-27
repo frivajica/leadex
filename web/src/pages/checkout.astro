@@ -161,6 +161,7 @@ const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
         </svg>
         <span data-i18n="checkout.secure_stripe">Secure 1-Click Checkout with Stripe Link</span>
       </div>
+      <div id="checkout-error-msg" class="hidden" data-i18n="checkout.error_failed">Failed to initiate secure checkout. Please try again.</div>
       
       <div class="bg-blue-50 text-blue-800 rounded-xl p-4 max-w-2xl w-full border border-blue-100 flex items-start sm:items-center gap-3 text-left sm:text-center mt-4">
         <svg class="w-6 h-6 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -246,9 +247,9 @@ const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
         } else {
           throw new Error('No checkout URL received');
         }
-      } catch (err) {
         console.error('Checkout failed:', err);
-        alert('Failed to initiate secure checkout. Please try again.');
+        const errorMsg = document.getElementById('checkout-error-msg')?.textContent || 'Failed to initiate secure checkout. Please try again.';
+        alert(errorMsg);
         if (loadingEl) {
           loadingEl.classList.add('opacity-0');
           setTimeout(() => {

@@ -28,7 +28,7 @@ export default function AllJobsContent() {
 			setJobs(data.jobs);
 			setTotal(data.total);
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Failed to load jobs');
+			setError(err instanceof Error ? err.message : t('jobs.error_load_all'));
 		} finally {
 			setLoading(false);
 		}
@@ -42,7 +42,7 @@ export default function AllJobsContent() {
 			setJobs(prev => [...prev, ...data.jobs]);
 			setTotal(data.total);
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Failed to load more jobs');
+			setError(err instanceof Error ? err.message : t('jobs.error_load_more'));
 		} finally {
 			setLoadingMore(false);
 		}
@@ -149,8 +149,8 @@ export default function AllJobsContent() {
 		<div className="animate-fade-in">
 			<div className="flex items-center justify-between mb-6">
 				<div>
-					<h1 className="text-2xl font-bold text-gray-900">All Jobs</h1>
-					<p className="text-gray-500 mt-1">{total} job{total !== 1 ? 's' : ''} total</p>
+					<h1 className="text-2xl font-bold text-gray-900">{t('nav.all_jobs')}</h1>
+					<p className="text-gray-500 mt-1">{t('dashboard.table.job_total', { count: total })}</p>
 				</div>
 				<a
 					href="/jobs/new"
@@ -252,7 +252,7 @@ export default function AllJobsContent() {
 				{hasMore && (
 					<div ref={sentinelRef} className="px-6 py-4 flex items-center justify-center">
 						<div className="animate-spin rounded-full h-6 w-6 border-2 border-primary-200 border-t-primary-600"></div>
-						<span className="ml-3 text-sm text-gray-500">Loading more jobs...</span>
+						<span className="ml-3 text-sm text-gray-500">{t('dashboard.table.loading_more')}</span>
 					</div>
 				)}
 			</div>

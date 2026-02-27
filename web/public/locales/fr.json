@@ -18,6 +18,7 @@
 		"welcome_back": "Bon retour",
 		"create_account_desc": "Créez votre compte",
 		"no_account": "Pas de compte ?",
+		"create_one_free": "Créez-en un gratuitement",
 		"has_account": "Déjà un compte ?",
 		"check_email": "Vérifiez vos emails !",
 		"magic_link_sent": "Nous avons envoyé un lien magique à",
@@ -63,6 +64,21 @@
 			"total_leads": "Total des leads",
 			"running": "En cours"
 		},
+		"status": {
+			"free_tier": "Niveau gratuit actif",
+			"free_tier_desc": "Vous utilisez votre clé API Google Places personnelle. Toutes les extractions sont gratuites !",
+			"weekly_plan": "Plan hebdomadaire actif",
+			"monthly_plan": "Plan mensuel actif",
+			"unlimited_until": "Accès illimité jusqu'au {{date}}",
+			"job_credits_one": "{{count}} crédit de tâche restant",
+			"job_credits_other": "{{count}} crédits de tâche restants",
+			"save_subscription": "Économisez davantage avec un abonnement hebdomadaire ou mensuel pour un accès illimité.",
+			"subscribe_save": "S'abonner et économiser",
+			"action_required": "Action requise : Choisissez un forfait",
+			"action_required_desc": "Ajoutez votre clé API Google (gratuit) ou sélectionnez un forfait géré pour commencer l'extraction.",
+			"add_api_key": "Ajouter une clé API",
+			"view_plans": "Voir les forfaits"
+		},
 		"actions": {
 			"create_new": "Nouveau",
 			"create_first": "Créez votre première tâche"
@@ -72,14 +88,21 @@
 			"no_jobs": "Aucune tâche pour le moment",
 			"no_jobs_desc": "Créez votre première tâche pour commencer à extraire des leads",
 			"view_all": "Voir toutes les tâches",
-			"leads_found": "leads trouvés"
+			"leads_found": "leads trouvés",
+			"job_count_one": "{{count}} tâche",
+			"job_count_other": "{{count}} tâches",
+			"job_total_one": "{{count}} extraction au total",
+			"job_total_other": "{{count}} extractions au total",
+			"loading_more": "Chargement de plus d'extractions..."
 		}
 	},
 	"jobs": {
 		"new_job_title": "Créer une nouvelle tâche d'extraction de leads",
 		"form": {
-			"name": "Nom de la tâche",
-			"name_placeholder": "ex: Recherche de restaurants à NYC",
+			"basic_info": "Informations de base",
+			"basic_info_desc": "Nommez votre extraction et définissez le lieu cible.",
+			"name": "Nom de l'extraction",
+			"name_placeholder": "ex : Recherche de restaurants à Paris",
 			"location": "Emplacement",
 			"location_placeholder": "Entrez l'adresse",
 			"use_my_location": "Ma position",
@@ -130,8 +153,10 @@
 				"min_reviews": "Avis minimum",
 				"min_reviews_desc": "Ignorer les entreprises avec moins d'avis que votre valeur.",
 				"min_photos": "Photos minimum",
-				"min_photos_desc": "Ignorer les entreprises avec moins de photos que votre valeur."
+				"min_photos_desc": "Écarter les entreprises ayant moins de photos que votre valeur spécifiée."
 			},
+			"filters_active_one": "1 Actif",
+			"filters_active_other": "{{count}} Actifs",
 			"process_choice": "Comment souhaitez-vous traiter l'extraction?",
 			"use_personal_key": "Clé personnelle",
 			"personal_key_desc": "Ajoutez votre clé dans les Paramètres pour extraire gratuitement.",
@@ -185,10 +210,12 @@
 		"table_website": "Site Web",
 		"table_actions": "Actions",
 		"progress": "Progression",
-		"error_load": "Échec du chargement des détails de la tâche",
-		"error_not_found": "Tâche non trouvée",
-		"error_delete": "Échec de la suppression de la tâche",
-		"error_restart": "Échec du redémarrage de la tâche",
+		"error_load": "Échec du chargement des détails de l'extraction",
+		"error_load_all": "Échec du chargement des extractions",
+		"error_load_more": "Échec du chargement de plus d'extractions",
+		"error_not_found": "Extraction non trouvée",
+		"error_delete": "Échec de la suppression de l'extraction",
+		"error_restart": "Échec du redémarrage de l'extraction",
 		"delete_confirm": "Êtes-vous sûr de vouloir supprimer cette tâche ?",
 		"export_failed": "L'exportation a échoué",
 		"export_failed_desc": "Échec de l'exportation des résultats. Veuillez réessayer."
@@ -196,6 +223,7 @@
 	"settings": {
 		"account": "Compte",
 		"account_id": "ID du compte",
+		"manage_plans": "Gérer les forfaits",
 		"api_keys_title": "Clés API Google Maps",
 		"api_keys_desc": "Ajoutez votre propre clé API Google Maps pour l'extraction de leads. Vous avez besoin d'une clé Places API pour rechercher des entreprises.",
 		"your_api_keys": "Vos clés API",

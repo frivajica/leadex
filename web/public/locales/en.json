@@ -58,6 +58,7 @@
 		"welcome_back": "Welcome back",
 		"create_account_desc": "Create your account",
 		"no_account": "Don't have an account?",
+		"create_one_free": "Create one free",
 		"has_account": "Already have an account?",
 		"check_email": "Check your email!",
 		"magic_link_sent": "We've sent a magic link to",
@@ -103,6 +104,21 @@
 			"total_leads": "Total Leads",
 			"running": "Running"
 		},
+		"status": {
+			"free_tier": "Free Tier Active",
+			"free_tier_desc": "You are using your personal Google Places API key. All lead extractions are free!",
+			"weekly_plan": "Weekly Plan Active",
+			"monthly_plan": "Monthly Plan Active",
+			"unlimited_until": "Unlimited access until {{date}}",
+			"job_credits_one": "{{count}} Job Credit Remaining",
+			"job_credits_other": "{{count}} Job Credits Remaining",
+			"save_subscription": "Save more with a weekly or monthly subscription for unlimited access.",
+			"subscribe_save": "Subscribe & Save",
+			"action_required": "Action Required: Choose a Plan",
+			"action_required_desc": "Add your Google API Key (Free) or select a Managed Plan to start extracting.",
+			"add_api_key": "Add API Key",
+			"view_plans": "View Plans"
+		},
 		"actions": {
 			"create_new": "Create New Job",
 			"create_first": "Create Your First Job"
@@ -112,12 +128,19 @@
 			"no_jobs": "No jobs yet",
 			"no_jobs_desc": "Create your first job to start extracting leads",
 			"view_all": "View all jobs",
-			"leads_found": "leads found"
+			"leads_found": "leads found",
+			"job_count_one": "{{count}} job",
+			"job_count_other": "{{count}} jobs",
+			"job_total_one": "{{count}} job total",
+			"job_total_other": "{{count}} jobs total",
+			"loading_more": "Loading more jobs..."
 		}
 	},
 	"jobs": {
 		"new_job_title": "Create New Lead Extraction Job",
 		"form": {
+			"basic_info": "Basic Information",
+			"basic_info_desc": "Name your job and set the target location.",
 			"name": "Job Name",
 			"name_placeholder": "e.g., NYC Restaurants Lead Hunt",
 			"location": "Location",
@@ -176,7 +199,9 @@
 				"min_reviews": "Minimum Reviews",
 				"min_reviews_desc": "Discard businesses with fewer reviews than your specified value.",
 				"min_photos": "Minimum Photos",
-				"min_photos_desc": "Discard businesses with fewer photos than your specified value."
+				"min_photos_desc": "Discard businesses with fewer photos than your specified value.",
+				"filters_active_one": "1 Active",
+				"filters_active_other": "{{count}} Active"
 			},
 			"groups": {
 				"car_services": "Car Services",
@@ -226,6 +251,8 @@
 		"table_actions": "Actions",
 		"progress": "Progress",
 		"error_load": "Failed to load job details",
+		"error_load_all": "Failed to load jobs",
+		"error_load_more": "Failed to load more jobs",
 		"error_not_found": "Job not found",
 		"error_delete": "Failed to delete job",
 		"error_restart": "Failed to restart job",
@@ -237,6 +264,7 @@
 		"desc": "Manage your account and API keys",
 		"account": "Account",
 		"account_id": "Account ID",
+		"manage_plans": "Manage Plans",
 		"billing_and_api": "Billing & API Configuration",
 		"billing_desc": "Lead Extractor is free if you provide your own Google Places API key. Otherwise, you can use our Managed Service.",
 		"api_keys_title": "Google Maps API Keys",

@@ -148,9 +148,9 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
                 </svg>
               </div>
               <div>
-                <h3 className="text-sm font-medium text-green-800">Free Tier Active</h3>
+                <h3 className="text-sm font-medium text-green-800">{t('dashboard.status.free_tier')}</h3>
                 <p className="text-sm text-green-700 mt-1">
-                  You are using your personal Google Places API key. All lead extractions are free!
+                  {t('dashboard.status.free_tier_desc')}
                 </p>
               </div>
             </div>
@@ -163,10 +163,12 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
               </div>
               <div>
                 <h3 className="text-sm font-medium text-blue-800">
-                  {user.subscription_tier === 'week' ? 'Weekly' : 'Monthly'} Plan Active
+                  {t(`dashboard.status.${user.subscription_tier === 'week' ? 'weekly' : 'monthly'}_plan`)}
                 </h3>
                 <p className="text-sm text-blue-700 mt-1">
-                  Unlimited access until {new Date(user.subscription_expires_at!).toLocaleDateString()}.
+                  {t('dashboard.status.unlimited_until', {
+                    date: new Date(user.subscription_expires_at!).toLocaleDateString()
+                  })}
                 </p>
               </div>
             </div>
@@ -180,10 +182,10 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-indigo-800">
-                    {user.job_credits} Job Credit{user.job_credits !== 1 ? 's' : ''} Remaining
+                    {t('dashboard.status.job_credits', { count: user.job_credits })}
                   </h3>
                   <p className="text-sm text-indigo-700 mt-1">
-                    Save more with a weekly or monthly subscription for unlimited access.
+                    {t('dashboard.status.save_subscription')}
                   </p>
                 </div>
               </div>
@@ -191,7 +193,7 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
                 href="/checkout"
                 className="flex-shrink-0 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm"
               >
-                Subscribe & Save
+                {t('dashboard.status.subscribe_save')}
               </a>
             </div>
           ) : (
@@ -203,18 +205,18 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-yellow-800">Action Required: Choose a Plan</h3>
+                  <h3 className="text-sm font-medium text-yellow-800">{t('dashboard.status.action_required')}</h3>
                   <p className="text-sm text-yellow-700 mt-1">
-                    Add your Google API Key (Free) or select a Managed Plan to start extracting.
+                    {t('dashboard.status.action_required_desc')}
                   </p>
                 </div>
               </div>
               <div className="flex gap-3 w-full sm:w-auto mt-2 sm:mt-0">
                 <a href="/settings" className="flex-1 sm:flex-none text-center px-4 py-2 bg-white text-yellow-700 border border-yellow-300 rounded-lg text-sm font-medium hover:bg-yellow-100 transition-colors shadow-sm">
-                  Add API Key
+                  {t('dashboard.status.add_api_key')}
                 </a>
                 <a href="/checkout" className="flex-1 sm:flex-none text-center px-4 py-2 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 transition-colors shadow-sm">
-                  View Plans
+                  {t('dashboard.status.view_plans')}
                 </a>
               </div>
             </div>
@@ -297,7 +299,7 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
           <h2 className="text-lg font-semibold text-slate-900">{t('dashboard.table.recent_jobs')}</h2>
           {jobs.length > 0 && (
             <span className="text-sm font-medium text-slate-500 bg-white px-2.5 py-1 rounded-full ring-1 ring-slate-200/50">
-              {jobs.length} job{jobs.length !== 1 ? 's' : ''}
+              {t('dashboard.table.job_count', { count: jobs.length })}
             </span>
           )}
         </div>

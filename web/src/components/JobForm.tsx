@@ -239,8 +239,8 @@ export default function JobForm() {
       {/* Card 1: Basic Information */}
       <div className="bg-white rounded-2xl shadow-premium ring-1 ring-slate-200/50 p-6 sm:p-8 space-y-6">
         <div className="border-b border-slate-100 pb-4 mb-6">
-          <h2 className="text-lg font-semibold text-slate-900">Basic Information</h2>
-          <p className="text-sm text-slate-500 mt-1">Name your job and set the target location.</p>
+          <h2 className="text-lg font-semibold text-slate-900">{t('jobs.form.basic_info')}</h2>
+          <p className="text-sm text-slate-500 mt-1">{t('jobs.form.basic_info_desc')}</p>
         </div>
 
         {/* Job Name */}
@@ -277,7 +277,7 @@ export default function JobForm() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              {t('jobs.form.detect_location', 'Detect Location')}
+              {t('jobs.form.detect_location')}
             </button>
             <button
               type="button"
@@ -290,7 +290,7 @@ export default function JobForm() {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
-              {t('jobs.form.enter_manually', 'Enter Manually')}
+              {t('jobs.form.enter_manually')}
             </button>
           </div>
 
@@ -485,7 +485,7 @@ export default function JobForm() {
             <div className="flex items-center gap-3">
               {activeFiltersCount > 0 && (
                 <span className="inline-flex items-center justify-center px-2.5 py-1 text-xs font-semibold text-primary-700 bg-primary-100 rounded-full ring-1 ring-primary-500/20">
-                  {activeFiltersCount} Active
+                  {t('jobs.form.filters.filters_active', { count: activeFiltersCount })}
                 </span>
               )}
               <svg className={`w-5 h-5 text-slate-400 transform transition-transform duration-300 ${showFilters ? 'rotate-180 text-primary-500' : 'group-hover:text-slate-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
