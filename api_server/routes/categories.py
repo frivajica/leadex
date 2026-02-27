@@ -5,7 +5,7 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from lib.config import VALID_PLACE_TYPES
+from lib.config import VALID_PLACE_TYPES, CATEGORY_GROUPS
 from lib.translations import get_category_translation, get_available_locales, get_translations
 from api_server.auth import get_current_user
 
@@ -85,3 +85,68 @@ async def get_categories(
         'locale': locale,
     }
 
+
+GROUP_ICONS = {
+    "car_services": "🚗",
+    "restaurants_and_dining": "🍽️",
+    "health_and_medical": "🏥",
+    "beauty_and_wellness": "💇",
+    "home_services": "🔧",
+    "shopping_and_retail": "🛍️",
+    "fitness_and_sports": "💪",
+    "lodging": "🏨",
+    "entertainment_and_leisure": "🎭",
+    "arts_and_culture": "🎨",
+    "education": "🎓",
+    "financial_services": "🏦",
+    "professional_services": "💼",
+    "pet_services": "🐾",
+    "travel_and_transport": "✈️",
+    "religious_places": "⛪",
+    "government_and_civic": "🏛️",
+    "real_estate": "🏠",
+    "nature_and_outdoors": "🌿",
+    "agriculture_and_industry": "🏭",
+    "other": "📁",
+}
+
+GROUP_LABELS = {
+    "car_services": "Car Services",
+    "restaurants_and_dining": "Restaurants & Dining",
+    "health_and_medical": "Health & Medical",
+    "beauty_and_wellness": "Beauty & Wellness",
+    "home_services": "Home Services",
+    "shopping_and_retail": "Shopping & Retail",
+    "fitness_and_sports": "Fitness & Sports",
+    "lodging": "Lodging",
+    "entertainment_and_leisure": "Entertainment & Leisure",
+    "arts_and_culture": "Arts & Culture",
+    "education": "Education",
+    "financial_services": "Financial Services",
+    "professional_services": "Professional Services",
+    "pet_services": "Pet Services",
+    "travel_and_transport": "Travel & Transport",
+    "religious_places": "Religious Places",
+    "government_and_civic": "Government & Civic",
+    "real_estate": "Real Estate",
+    "nature_and_outdoors": "Nature & Outdoors",
+    "agriculture_and_industry": "Agriculture & Industry",
+    "other": "Other",
+}
+
+
+@router.get("/category-groups")
+async def get_category_groups(
+    user: dict = Depends(require_auth),
+):
+    """Get category groups for the job creation form."""
+    groups = []
+    for group_id, members in CATEGORY_GROUPS.items():
+        groups.append({
+            "id": group_id,
+            "label": GROUP_LABELS.get(group_id, group_id.replace("_", " ").title()),
+            "icon": GROUP_ICONS.get(group_id, "📁"),
+            "count": len(members),
+            "categories": members,
+        })
+    return {"groups": groups, "total": len(groups)}

@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { authApi } from '../lib/api';
 import { useTranslation } from 'react-i18next';
 import "../lib/i18n";
@@ -12,6 +12,7 @@ interface AuthFormProps {
 
 export default function AuthForm({ action, locale, redirectUrl }: AuthFormProps) {
   const { t, i18n: i18nInstance, ready } = useTranslation();
+  const errorRef = useRef<HTMLDivElement>(null);
 
   // Safe global client-side change runs in useEffect
 
@@ -26,6 +27,22 @@ export default function AuthForm({ action, locale, redirectUrl }: AuthFormProps)
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isValid = useMemo(() => {
+    if (!emailRegex.test(email)) return false;
+    if (usePassword) {
+      if (action === 'register') return password.length >= 8;
+      return password.length > 0;
+    }
+    return true;
+  }, [email, password, usePassword, action]);
+
+  useEffect(() => {
+    if (error && errorRef.current) {
+      errorRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [error]);
 
   const passwordStrength = useMemo(() => {
     if (!password) return { strengthScore: 0, label: '', color: '' };
@@ -106,13 +123,23 @@ export default function AuthForm({ action, locale, redirectUrl }: AuthFormProps)
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm animate-shake">
-          <div className="flex items-center gap-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <div
+          ref={errorRef}
+          className="sticky top-4 z-10 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl shadow-lg animate-shake flex items-start gap-3"
+        >
+          <svg className="w-5 h-5 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span className="flex-1 text-sm">{error}</span>
+          <button
+            type="button"
+            onClick={() => setError('')}
+            className="shrink-0 text-red-400 hover:text-red-600 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
-            {error}
-          </div>
+          </button>
         </div>
       )}
 
@@ -131,7 +158,7 @@ export default function AuthForm({ action, locale, redirectUrl }: AuthFormProps)
             type="email"
             required
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => { setEmail(e.target.value); setError(''); }}
             className="block w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
             placeholder={t('auth.email_placeholder')}
           />
@@ -155,7 +182,7 @@ export default function AuthForm({ action, locale, redirectUrl }: AuthFormProps)
               required
               minLength={8}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => { setPassword(e.target.value); setError(''); }}
               className="block w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
               placeholder={t('auth.password_placeholder')}
             />
@@ -180,7 +207,7 @@ export default function AuthForm({ action, locale, redirectUrl }: AuthFormProps)
 
       <button
         type="submit"
-        disabled={loading}
+        disabled={!isValid || loading}
         className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-all duration-200"
       >
         {loading ? (

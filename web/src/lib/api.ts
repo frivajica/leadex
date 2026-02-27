@@ -201,6 +201,19 @@ export const categoriesApi = {
     fetchApi<{ categories: Category[]; total: number; locale: string }>(`/api/categories?locale=${locale}`),
 };
 
+export interface CategoryGroup {
+  id: string;
+  label: string;
+  icon: string;
+  count: number;
+  categories: string[];
+}
+
+export const categoryGroupsApi = {
+  list: () =>
+    fetchApi<{ groups: CategoryGroup[]; total: number }>('/api/category-groups'),
+};
+
 export const translationsApi = {
   get: (locale: string = 'en') =>
     fetchApi<TranslationsData>(`/api/translations?locale=${locale}`),

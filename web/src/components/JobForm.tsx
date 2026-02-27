@@ -1,24 +1,28 @@
-import { useState, useEffect, useMemo } from 'react';
-import { jobsApi, keysApi, categoriesApi, type Category } from '../lib/api';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { jobsApi, keysApi, categoryGroupsApi, type CategoryGroup } from '../lib/api';
 import { useTranslation } from 'react-i18next';
 import '../lib/i18n';
-import i18n from '../lib/i18n';
+
+enum LocationMode {
+  Detect = 'detect',
+  Manual = 'manual',
+}
 
 export default function JobForm() {
   const { t, ready } = useTranslation();
+  const errorRef = useRef<HTMLDivElement>(null);
 
+  // UI state
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [allCategories, setAllCategories] = useState<Category[] | null>(null);
-  const [locationLoading, setLocationLoading] = useState(false);
-  const [query, setQuery] = useState('');
-  const [useGoogleKey, setUseGoogleKey] = useState<boolean | null>(null);
   const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
   const [showFilters, setShowFilters] = useState(false);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [locationMode, setLocationMode] = useState<LocationMode>(LocationMode.Detect);
+
+  // Data
+  const [groups, setGroups] = useState<CategoryGroup[] | null>(null);
   const [hasApiKey, setHasApiKey] = useState<boolean | null>(null);
 
   // Form state
@@ -27,60 +31,60 @@ export default function JobForm() {
   const [lat, setLat] = useState('');
   const [lng, setLng] = useState('');
   const [radius, setRadius] = useState(5000);
+  const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<'score' | 'distance'>('score');
   const [useFilters, setUseFilters] = useState(false);
   const [minRating, setMinRating] = useState(4.0);
   const [minReviews, setMinReviews] = useState(10);
   const [minPhotos, setMinPhotos] = useState(3);
-  const [categorySearch, setCategorySearch] = useState('');
 
-  // Filtered categories based on search
-  const filteredCategories = useMemo(() => {
-    if (!allCategories) return [];
-    if (!categorySearch.trim()) return allCategories;
-    const search = categorySearch.toLowerCase();
-    return allCategories.filter(cat =>
-      cat.label.toLowerCase().includes(search) ||
-      cat.id.toLowerCase().includes(search)
-    );
-  }, [categorySearch, allCategories]);
+  useEffect(() => setMounted(true), []);
 
-  // Fetch categories and API keys on mount
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [catsData, keysData] = await Promise.all([
-          categoriesApi.list(i18n.language),
-          keysApi.list()
+        const [groupsData, keysData] = await Promise.all([
+          categoryGroupsApi.list(),
+          keysApi.list(),
         ]);
-        setAllCategories(catsData.categories);
+        setGroups(groupsData.groups);
         setHasApiKey(keysData.keys.length > 0);
       } catch {
         setHasApiKey(false);
       }
     };
     fetchData();
-  }, [i18n.language]);
+  }, []);
 
-  const toggleCategory = (catId: string) => {
-    setCategories(prev =>
-      prev.includes(catId)
-        ? prev.filter(c => c !== catId)
-        : [...prev, catId]
+  // Scroll to error when it appears
+  useEffect(() => {
+    if (error && errorRef.current) {
+      errorRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [error]);
+
+  // Validation
+  const isValid = name.trim() !== '' && lat !== '' && lng !== '' && selectedGroups.length > 0;
+
+  const toggleGroup = useCallback((groupId: string) => {
+    setSelectedGroups(prev =>
+      prev.includes(groupId)
+        ? prev.filter(g => g !== groupId)
+        : [...prev, groupId]
     );
-  };
+  }, []);
 
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
-      alert(t('jobs.form.error_location'));
+      setError(t('jobs.form.error_location'));
       return;
     }
 
     setLocationLoading(true);
+    setError('');
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
-
         setLat(String(latitude));
         setLng(String(longitude));
 
@@ -90,21 +94,19 @@ export default function JobForm() {
           );
           const data = await response.json();
           setAddress(data.display_name || `${latitude}, ${longitude}`);
-        } catch (e) {
-          console.error('Geocoding error:', e);
+        } catch {
           setAddress(`${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
         }
 
         setLocationLoading(false);
       },
       (err) => {
-        console.error('Location error:', err);
         setLocationLoading(false);
         let msg = t('jobs.form.error_location') + '. ';
         if (err.code === 1) msg += 'Permission denied. Please allow location or enter manually.';
         else if (err.code === 2) msg += 'Location unavailable.';
         else msg += 'Please enter manually.';
-        alert(msg);
+        setError(msg);
       },
       { enableHighAccuracy: false, timeout: 15000 }
     );
@@ -117,19 +119,18 @@ export default function JobForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!name.trim()) {
-      setError(t('jobs.form.error_job_name'));
-      return;
-    }
-
-    if (!lat || !lng) {
-      setError(t('jobs.form.error_location'));
-      return;
-    }
+    if (!isValid) return;
 
     setLoading(true);
     setError('');
+
+    // Resolve selected groups into category IDs
+    const categories = groups
+      ? selectedGroups.flatMap(gId => {
+        const group = groups.find(g => g.id === gId);
+        return group ? group.categories : [];
+      })
+      : [];
 
     try {
       const result = await jobsApi.create({
@@ -152,7 +153,6 @@ export default function JobForm() {
       }, 1500);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : t('auth.error_generic');
-      // Intercept payment required error to redirect to Stripe Link checkout
       if (errorMessage.toLowerCase().includes('payment required')) {
         window.location.href = '/checkout';
         return;
@@ -163,9 +163,7 @@ export default function JobForm() {
     }
   };
 
-  if (!ready) return null;
-
-  if (!mounted) return null;
+  if (!ready || !mounted) return null;
 
   if (success) {
     return (
@@ -181,13 +179,37 @@ export default function JobForm() {
     );
   }
 
+  // Helper text for missing requirements
+  const getMissingHints = () => {
+    const hints: string[] = [];
+    if (!name.trim()) hints.push(t('jobs.form.name'));
+    if (!lat || !lng) hints.push(t('jobs.form.location'));
+    if (selectedGroups.length === 0) hints.push(t('jobs.form.business_categories', 'Categories'));
+    return hints;
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
 
-
+      {/* Sticky Error Banner */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-          {error}
+        <div
+          ref={errorRef}
+          className="sticky top-4 z-10 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl shadow-lg animate-shake flex items-start gap-3"
+        >
+          <svg className="w-5 h-5 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span className="flex-1 text-sm">{error}</span>
+          <button
+            type="button"
+            onClick={() => setError('')}
+            className="shrink-0 text-red-400 hover:text-red-600 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
       )}
 
@@ -199,7 +221,7 @@ export default function JobForm() {
         <input
           type="text"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => { setName(e.target.value); setError(''); }}
           className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           placeholder={t('jobs.form.name_placeholder')}
         />
@@ -210,37 +232,103 @@ export default function JobForm() {
         <label className="block text-sm font-medium text-gray-700 mb-2">
           {t('jobs.form.location')} <span className="text-red-500">*</span>
         </label>
-        <button
-          type="button"
-          onClick={getCurrentLocation}
-          disabled={locationLoading}
-          className="mb-3 flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 text-sm font-medium"
-        >
-          {locationLoading ? (
-            <>
-              <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-              </svg>
-              {t('jobs.form.getting_location')}
-            </>
-          ) : (
-            <>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              {t('jobs.form.use_my_location')}
-            </>
-          )}
-        </button>
-        <input
-          type="text"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-          placeholder={t('jobs.form.location_placeholder')}
-        />
+
+        {/* Segmented Control */}
+        <div className="flex rounded-lg border border-gray-200 p-1 bg-gray-50 mb-3">
+          <button
+            type="button"
+            onClick={() => setLocationMode(LocationMode.Detect)}
+            className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${locationMode === LocationMode.Detect
+                ? 'bg-white text-primary-700 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+              }`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            {t('jobs.form.detect_location', 'Detect Location')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setLocationMode(LocationMode.Manual)}
+            className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${locationMode === LocationMode.Manual
+                ? 'bg-white text-primary-700 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+              }`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            {t('jobs.form.enter_manually', 'Enter Manually')}
+          </button>
+        </div>
+
+        {locationMode === LocationMode.Detect ? (
+          <div className="space-y-3">
+            <button
+              type="button"
+              onClick={getCurrentLocation}
+              disabled={locationLoading}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 text-sm font-medium transition-colors"
+            >
+              {locationLoading ? (
+                <>
+                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  {t('jobs.form.getting_location')}
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  {t('jobs.form.use_my_location')}
+                </>
+              )}
+            </button>
+            {address && (
+              <div className="flex items-start gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <svg className="w-4 h-4 text-green-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span className="text-sm text-green-700">{address}</span>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">
+                {t('jobs.form.latitude', 'Latitude')}
+              </label>
+              <input
+                type="number"
+                step="any"
+                value={lat}
+                onChange={(e) => { setLat(e.target.value); setError(''); }}
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                placeholder="e.g. 19.4326"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">
+                {t('jobs.form.longitude', 'Longitude')}
+              </label>
+              <input
+                type="number"
+                step="any"
+                value={lng}
+                onChange={(e) => { setLng(e.target.value); setError(''); }}
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                placeholder="e.g. -99.1332"
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Radius */}
@@ -266,15 +354,17 @@ export default function JobForm() {
         </div>
       </div>
 
-      {/* Categories */}
+      {/* Category Groups */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <label className="block text-sm font-medium text-gray-700">{t('jobs.form.business_categories')}</label>
-          {allCategories && (
+          <label className="block text-sm font-medium text-gray-700">
+            {t('jobs.form.business_categories', 'Business Categories')} <span className="text-red-500">*</span>
+          </label>
+          {groups && (
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => allCategories && setCategories(allCategories.map(c => c.id))}
+                onClick={() => setSelectedGroups(groups.map(g => g.id))}
                 className="text-xs text-primary-600 hover:text-primary-700 font-medium"
               >
                 {t('jobs.form.select_all')}
@@ -282,7 +372,7 @@ export default function JobForm() {
               <span className="text-gray-300">|</span>
               <button
                 type="button"
-                onClick={() => setCategories([])}
+                onClick={() => setSelectedGroups([])}
                 className="text-xs text-gray-500 hover:text-gray-700 font-medium"
               >
                 {t('jobs.form.deselect_all')}
@@ -291,43 +381,46 @@ export default function JobForm() {
           )}
         </div>
 
-        {/* Search */}
-        <input
-          type="text"
-          placeholder={t('jobs.form.search_categories_placeholder')}
-          value={categorySearch}
-          onChange={(e) => setCategorySearch(e.target.value)}
-          disabled={!allCategories}
-          className="w-full px-3 py-2 mb-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-100"
-        />
-
-        {/* Categories list or skeleton */}
-        <div className="flex flex-wrap gap-2 max-h-64 overflow-y-auto p-1">
-          {allCategories === null ? (
-            // Skeleton loader
-            Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="animate-pulse bg-gray-200 rounded-full h-8 w-20"></div>
-            ))
-          ) : (
-            filteredCategories.map(cat => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => toggleCategory(cat.id)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${categories.includes(cat.id)
-                  ? 'bg-primary-600 text-white shadow-md'
-                  : 'bg-white text-gray-700 border border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-              >
-                <span>{cat.icon}</span>
-                <span>{cat.label}</span>
-              </button>
-            ))
-          )}
-        </div>
-        {categories.length > 0 && (
+        {groups === null ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {Array.from({ length: 9 }).map((_, i) => (
+              <div key={i} className="animate-pulse bg-gray-200 rounded-xl h-20" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {groups.map(group => {
+              const isSelected = selectedGroups.includes(group.id);
+              return (
+                <button
+                  key={group.id}
+                  type="button"
+                  onClick={() => toggleGroup(group.id)}
+                  className={`flex flex-col items-center justify-center gap-1.5 p-4 rounded-xl border-2 transition-all text-center ${isSelected
+                      ? 'border-primary-500 bg-primary-50 shadow-sm'
+                      : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                    }`}
+                >
+                  <span className="text-2xl">{group.icon}</span>
+                  <span className={`text-xs font-medium leading-tight ${isSelected ? 'text-primary-700' : 'text-gray-700'}`}>
+                    {group.label}
+                  </span>
+                  <span className={`text-[10px] ${isSelected ? 'text-primary-500' : 'text-gray-400'}`}>
+                    {group.count} {group.count === 1 ? 'type' : 'types'}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+        {selectedGroups.length > 0 && (
           <p className="mt-2 text-sm text-gray-500">
-            {t('jobs.form.categories_selected', { count: categories.length })}
+            {t('jobs.form.categories_selected', { count: selectedGroups.length })} group{selectedGroups.length !== 1 ? 's' : ''}
+          </p>
+        )}
+        {selectedGroups.length === 0 && groups !== null && (
+          <p className="mt-2 text-xs text-amber-600">
+            {t('jobs.form.select_at_least_one', 'Select at least one category group to continue')}
           </p>
         )}
       </div>
@@ -488,28 +581,35 @@ export default function JobForm() {
       )}
 
       {/* Submit */}
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full flex justify-center items-center gap-2 py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-      >
-        {loading ? (
-          <span className="flex items-center gap-2">
-            <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-            </svg>
-            {t('jobs.form.creating_job')}
-          </span>
-        ) : (
-          <span className="flex items-center gap-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            {t('jobs.form.create_job')}
-          </span>
+      <div>
+        <button
+          type="submit"
+          disabled={!isValid || loading}
+          className="w-full flex justify-center items-center gap-2 py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-all"
+        >
+          {loading ? (
+            <span className="flex items-center gap-2">
+              <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              {t('jobs.form.creating_job')}
+            </span>
+          ) : (
+            <span className="flex items-center gap-2">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              {t('jobs.form.create_job')}
+            </span>
+          )}
+        </button>
+        {!isValid && !loading && (
+          <p className="mt-2 text-xs text-gray-400 text-center">
+            {t('jobs.form.missing_fields', 'Missing')}: {getMissingHints().join(', ')}
+          </p>
         )}
-      </button>
+      </div>
     </form>
   );
 }

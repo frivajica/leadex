@@ -116,8 +116,20 @@ export default function SettingsContent() {
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
-            {error}
+          <div className="sticky top-4 z-10 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl shadow-lg mb-4 animate-shake flex items-start gap-3">
+            <svg className="w-5 h-5 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="flex-1 text-sm">{error}</span>
+            <button
+              type="button"
+              onClick={() => setError('')}
+              className="shrink-0 text-red-400 hover:text-red-600 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         )}
 
@@ -187,7 +199,15 @@ export default function SettingsContent() {
             disabled={saving || !newKeyName || !newApiKey}
             className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {saving ? t('settings.adding') : t('settings.add_api_key')}
+            {saving ? (
+              <span className="flex items-center gap-2">
+                <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                {t('settings.adding')}
+              </span>
+            ) : t('settings.add_api_key')}
           </button>
         </form>
 
