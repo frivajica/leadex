@@ -1,0 +1,17 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Page Not Found - Lead Extractor">
+  <div class="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div class="text-center">
+      <div class="animate-spin rounded-full h-10 w-10 border-4 border-primary-200 border-t-primary-600 mx-auto mb-4"></div>
+      <p class="text-gray-500 text-sm">Redirecting...</p>
+    </div>
+  </div>
+
+  <script>
+    const hasToken = document.cookie.includes('access_token=');
+    window.location.replace(hasToken ? '/dashboard' : '/');
+  </script>
+</Layout>
