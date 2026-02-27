@@ -9,6 +9,7 @@ A self-hosted multi-user web service for extracting leads from Google Maps. Find
 - **Multi-user Auth** — Register via email/password or passwordless magic links
 - **Internationalization** — Full i18n support (English, Spanish, French)
 - **Lead Scoring** — Businesses scored by rating, reviews, photos, and profile completeness
+- **Intuitive UX** — Smart location picker (auto-detect or manual), grouped categories (500+ types in 21 groups), and infinite scrolling
 - **Export Results** — Download as CSV or JSON
 - **Self-hosted** — Full control over your data
 
