@@ -21,8 +21,8 @@ const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
           <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             <!-- Free / BYOK Tier -->
             <div class="p-8 rounded-2xl bg-gray-50 border border-gray-200 shadow-sm flex flex-col items-center text-center">
-              <h3 class="text-2xl font-bold text-gray-900 mb-2">Self-Hosted / BYOK</h3>
-              <p class="text-gray-500 mb-6 font-medium">Bring Your Own Key</p>
+              <h3 class="text-2xl font-bold text-gray-900 mb-2" data-i18n="landing.pricing_byok">Self-Hosted / BYOK</h3>
+              <p class="text-gray-500 mb-6 font-medium" data-i18n="landing.pricing_byok_subtitle">Bring Your Own Key</p>
               <div class="text-4xl font-extrabold text-primary-600 mb-6">$0<span class="text-lg text-gray-500 font-medium">/mo</span></div>
               
               <ul class="text-left w-full space-y-4 mb-8">
@@ -30,67 +30,69 @@ const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
                   <svg class="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Unlimited Extraction Jobs</span>
+                  <span data-i18n="landing.pricing_unlimited_jobs">Unlimited Extraction Jobs</span>
                 </li>
                 <li class="flex items-start text-gray-700">
                   <svg class="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Use your own Google Cloud Billing</span>
+                  <span data-i18n="landing.pricing_own_billing">Use your own Google Cloud Billing</span>
                 </li>
-                <li class="flex items-start text-gray-500 text-sm mt-1 ml-8">
+                <li class="flex items-start text-gray-500 text-sm mt-1 ml-8" data-i18n="landing.pricing_google_credit">
                   (Google provides $200 free credit monthly)
                 </li>
               </ul>
               
               {isLoggedIn ? (
                 <a href="/dashboard" class="w-full py-4 px-6 bg-white border-2 border-primary-600 text-primary-700 rounded-xl font-bold hover:bg-primary-50 transition-colors mt-auto">
-                  Go to Dashboard
+                  <span data-i18n="common.go_to_dashboard">Go to Dashboard</span>
                 </a>
               ) : (
                 <a href="/register" class="w-full py-4 px-6 bg-white border-2 border-primary-600 text-primary-700 rounded-xl font-bold hover:bg-primary-50 transition-colors mt-auto">
-                  Start For Free
+                  <span data-i18n="landing.pricing_start_free">Start For Free</span>
                 </a>
               )}
             </div>
 
             <!-- Managed / Paid Tier -->
             <div class="p-8 rounded-2xl bg-gradient-to-b from-primary-900 to-primary-800 text-white shadow-xl flex flex-col items-center text-center relative overflow-hidden">
-               <div class="absolute top-0 right-0 bg-primary-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider">
+                <div class="absolute top-0 right-0 bg-primary-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider" data-i18n="landing.pricing_turnkey">
                 Turnkey
               </div>
-              <h3 class="text-2xl font-bold mb-2">Managed Service</h3>
-              <p class="text-primary-200 mb-6 font-medium">We handle everything</p>
-              <div class="text-4xl font-extrabold text-white mb-6">Starts at $4<span class="text-lg text-primary-300 font-medium">/job</span></div>
+              <h3 class="text-2xl font-bold mb-2" data-i18n="landing.pricing_managed">Managed Service</h3>
+              <p class="text-primary-200 mb-6 font-medium" data-i18n="landing.pricing_managed_subtitle">We handle everything</p>
+              <div class="text-4xl font-extrabold text-white mb-6">
+                <span data-i18n="landing.pricing_managed_starts">Starts at $4</span><span class="text-lg text-primary-300 font-medium">/job</span>
+              </div>
               
               <ul class="text-left w-full space-y-4 mb-8">
                 <li class="flex items-start text-primary-50">
                   <svg class="h-6 w-6 text-primary-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Zero setup required</span>
+                  <span data-i18n="landing.pricing_zero_setup">Zero setup required</span>
                 </li>
                  <li class="flex items-start text-primary-50">
                   <svg class="h-6 w-6 text-primary-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>We handle Google API limits</span>
+                  <span data-i18n="landing.pricing_api_limits">We handle Google API limits</span>
                 </li>
                 <li class="flex items-start text-primary-50 mt-1">
                    <svg class="h-6 w-6 text-primary-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Flexible Subscriptions Available ($10/wk)</span>
+                  <span data-i18n="landing.pricing_subscriptions">Flexible Subscriptions Available ($10/wk)</span>
                 </li>
               </ul>
               
               {isLoggedIn ? (
                 <a href="/checkout" class="w-full py-4 px-6 bg-white text-primary-900 rounded-xl font-bold hover:bg-primary-50 transition-colors shadow-lg mt-auto">
-                  Get Started
+                  <span data-i18n="landing.get_started">Get Started</span>
                 </a>
               ) : (
                 <a href="/checkout" class="w-full py-4 px-6 bg-white text-primary-900 rounded-xl font-bold hover:bg-primary-50 transition-colors shadow-lg mt-auto">
-                  View Managed Plans
+                  <span data-i18n="landing.pricing_view_plans">View Managed Plans</span>
                 </a>
               )}
             </div>

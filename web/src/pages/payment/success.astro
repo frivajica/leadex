@@ -19,16 +19,16 @@ import Footer from '../../components/landing/Footer.astro';
           </svg>
         </div>
         
-        <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Payment Received!</h1>
-        <p class="text-gray-600 mb-8">
+        <h1 class="text-3xl font-extrabold text-gray-900 mb-2" data-i18n="payment.success_title">Payment Received!</h1>
+        <p class="text-gray-600 mb-8" data-i18n="payment.success_desc">
           Thank you for your purchase. Your account has been updated with your new access plan.
         </p>
         
         <div class="space-y-4">
           <a href="/dashboard" class="block w-full py-4 px-6 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 transition-all shadow-lg hover:shadow-primary-200">
-            Go to Dashboard
+            <span data-i18n="payment.success_cta">Go to Dashboard</span>
           </a>
-          <p class="text-sm text-gray-500">
+          <p class="text-sm text-gray-500" data-i18n="payment.success_note">
             It may take a minute for your credits to appear while we process the confirmation.
           </p>
         </div>
