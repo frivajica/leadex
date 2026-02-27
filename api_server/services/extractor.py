@@ -1,5 +1,6 @@
 # extractor.py - Background job runner for lead extraction
 import asyncio
+import os
 import threading
 from typing import Optional, Callable, Awaitable
 from datetime import datetime
@@ -9,10 +10,13 @@ from lib.filters import apply_all_filters
 from lib.exporter import export_to_csv, export_to_markdown, export_to_json
 from api_server.database import (
     get_job,
+    get_user_by_id,
     update_job_status,
     create_result,
     get_active_api_key,
 )
+
+GOOGLE_PLACES_API_KEY = os.getenv("GOOGLE_PLACES_API_KEY", "")
 
 
 class LeadExtractorService:
@@ -22,6 +26,33 @@ class LeadExtractorService:
         self._running_jobs: dict[int, asyncio.Task] = {}
         self._job_cancellations: dict[int, Callable[[], None]] = {}
 
+    def _resolve_api_key(self, user_id: int) -> Optional[str]:
+        """Resolve the API key to use: user's own key first, then platform key for paid users."""
+        user_key = get_active_api_key(user_id)
+        if user_key:
+            return user_key
+
+        user = get_user_by_id(user_id)
+        if not user:
+            return None
+
+        tier = user.get("subscription_tier", "free")
+        credits = user.get("job_credits", 0)
+        expires_at_str = user.get("subscription_expires_at")
+
+        has_paid_access = False
+        if tier in ["week", "month"] and expires_at_str:
+            expires_at = datetime.fromisoformat(expires_at_str)
+            if expires_at > datetime.utcnow():
+                has_paid_access = True
+        if credits > 0:
+            has_paid_access = True
+
+        if has_paid_access and GOOGLE_PLACES_API_KEY:
+            return GOOGLE_PLACES_API_KEY
+
+        return None
+
     async def _run_job(
         self,
         job_id: int,
@@ -29,18 +60,16 @@ class LeadExtractorService:
         progress_callback: Optional[Callable[[str, int, int], Awaitable[None]]] = None,
     ):
         """Run a single job."""
-        # Get job details
         job = get_job(job_id, user_id)
         if not job:
             return
 
-        # Get user's API key
-        api_key = get_active_api_key(user_id)
+        api_key = self._resolve_api_key(user_id)
         if not api_key:
             update_job_status(
                 job_id,
                 "failed",
-                error_message="No API key configured. Please add your Google Maps API key in settings."
+                error_message="No API key available. Add your own Google Maps API key in settings, or purchase a managed plan."
             )
             return
 

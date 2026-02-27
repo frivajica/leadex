@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { authApi, keysApi, type ApiKeys } from '../lib/api';
+import { authApi, keysApi, type ApiKeys, type User } from '../lib/api';
 import { useTranslation } from 'react-i18next';
 import '../lib/i18n';
 
 export default function SettingsContent() {
   const { t, ready } = useTranslation();
-  const [user, setUser] = useState<{ email: string } | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [apiKeys, setApiKeys] = useState<ApiKeys[]>([]);
   const [newKeyName, setNewKeyName] = useState('');
   const [newApiKey, setNewApiKey] = useState('');
@@ -102,15 +102,17 @@ export default function SettingsContent() {
               {t('settings.billing_desc', 'Lead Extractor is free if you provide your own Google Places API key. Otherwise, you can use our Managed Service.')}
             </p>
           </div>
-          <a
-            href="/checkout"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-700 rounded-lg text-sm font-medium hover:bg-primary-100 transition-colors border border-primary-200"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-            </svg>
-            Manage Plans
-          </a>
+          {!(user?.subscription_tier === 'week' || user?.subscription_tier === 'month') && (
+            <a
+              href="/checkout"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-700 rounded-lg text-sm font-medium hover:bg-primary-100 transition-colors border border-primary-200"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+              Manage Plans
+            </a>
+          )}
         </div>
 
         {error && (

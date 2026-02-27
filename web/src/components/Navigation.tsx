@@ -27,6 +27,7 @@ export default function Navigation({ currentPath }: NavigationProps) {
 
 	const navItems = [
 		{ href: '/dashboard', label: t('nav.dashboard'), key: 'dashboard' },
+		{ href: '/jobs', label: t('nav.all_jobs', 'All Jobs'), key: 'all_jobs' },
 		{ href: '/jobs/new', label: t('nav.new_job'), key: 'new_job' },
 		{ href: '/settings', label: t('nav.settings'), key: 'settings' },
 	];

@@ -119,7 +119,7 @@ export const authApi = {
 
 export const jobsApi = {
   list: (limit = 50, offset = 0) =>
-    fetchApi<{ jobs: Job[] }>(`/api/jobs?limit=${limit}&offset=${offset}`),
+    fetchApi<{ jobs: Job[]; total: number }>(`/api/jobs?limit=${limit}&offset=${offset}`),
 
   get: (id: number) => fetchApi<Job>(`/api/jobs/${id}`),
 

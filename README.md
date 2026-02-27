@@ -270,19 +270,30 @@ lead-extractor/
 | `SECRET_KEY` | JWT secret key | Auto-generated |
 | `DATABASE_URL` | SQLite path | `sqlite:///./data/leads.db` |
 | `FRONTEND_URL` | Frontend URL (used for CORS, magic links, Stripe redirects) | `http://localhost:4321` |
+| `GOOGLE_PLACES_API_KEY` | Platform-managed Google Places API key (for paid users) | — |
 | `RESEND_API_KEY` | Resend API key (free tier available) | — (mock mode) |
 | `FROM_EMAIL` | Sender email address | `onboarding@resend.dev` |
 | `PUBLIC_API_URL` | API URL for frontend | `http://localhost:8000` |
 | `STRIPE_SECRET_KEY` | Stripe secret key (`sk_test_` or `sk_live_`) | — |
 | `STRIPE_WEBHOOK_SECRET` | Stripe webhook signing secret (`whsec_`) | — |
 
-## Getting a Google Maps API Key
+## Google Maps API Keys
+
+Lead Extractor uses a **dual API key model**:
+
+- **Free users** bring their own Google Places API key (added in Settings)
+- **Paid users** automatically use the platform-managed key (`GOOGLE_PLACES_API_KEY` env var)
+
+If a paid user also has their own key configured, their personal key takes priority.
+
+### Getting a Google Places API Key
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Create a new project
-3. Enable **Places API**
+3. Enable **Places API (New)**
 4. Create credentials (API key)
-5. Add the key in the app settings
+5. For your platform key, add it to `.env` as `GOOGLE_PLACES_API_KEY`
+6. Free users add their key in the app Settings page
 
 ## Tech Stack
 

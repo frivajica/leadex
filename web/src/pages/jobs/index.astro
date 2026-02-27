@@ -1,0 +1,15 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AllJobsContent from '../../components/AllJobsContent';
+import Navigation from '../../components/Navigation';
+---
+
+<Layout title="All Jobs - Lead Extractor">
+  <div class="min-h-screen bg-gray-50">
+    <Navigation client:load currentPath="/jobs" />
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <AllJobsContent client:load />
+    </main>
+  </div>
+</Layout>

@@ -306,6 +306,13 @@ def get_jobs(user_id: int, limit: int = 50, offset: int = 0) -> List[dict]:
         return [dict(row) for row in cursor.fetchall()]
 
 
+def count_jobs(user_id: int) -> int:
+    """Count total jobs for a user."""
+    with get_db_cursor() as cursor:
+        cursor.execute("SELECT COUNT(*) FROM jobs WHERE user_id = ?", (user_id,))
+        return cursor.fetchone()[0]
+
+
 def update_job_status(
     job_id: int,
     status: str,

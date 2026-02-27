@@ -153,7 +153,7 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
                 </p>
               </div>
             </div>
-          ) : user.subscription_tier !== 'free' || user.job_credits > 0 ? (
+          ) : user.subscription_tier === 'week' || user.subscription_tier === 'month' ? (
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3 shadow-sm">
               <div className="flex-shrink-0 mt-0.5">
                 <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -161,13 +161,37 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
                 </svg>
               </div>
               <div>
-                <h3 className="text-sm font-medium text-blue-800">Managed Plan Active</h3>
+                <h3 className="text-sm font-medium text-blue-800">
+                  {user.subscription_tier === 'week' ? 'Weekly' : 'Monthly'} Plan Active
+                </h3>
                 <p className="text-sm text-blue-700 mt-1">
-                  {user.subscription_tier === 'single'
-                    ? `You have ${user.job_credits} job credits available.`
-                    : `You have unlimited access until ${new Date(user.subscription_expires_at!).toLocaleDateString()}.`}
+                  Unlimited access until {new Date(user.subscription_expires_at!).toLocaleDateString()}.
                 </p>
               </div>
+            </div>
+          ) : user.job_credits > 0 ? (
+            <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 mt-0.5">
+                  <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-indigo-800">
+                    {user.job_credits} Job Credit{user.job_credits !== 1 ? 's' : ''} Remaining
+                  </h3>
+                  <p className="text-sm text-indigo-700 mt-1">
+                    Save more with a weekly or monthly subscription for unlimited access.
+                  </p>
+                </div>
+              </div>
+              <a
+                href="/checkout"
+                className="flex-shrink-0 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm"
+              >
+                Subscribe & Save
+              </a>
             </div>
           ) : (
             <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
@@ -296,7 +320,7 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
           </div>
         ) : (
           <div className="divide-y divide-gray-100">
-            {jobs.map((job) => {
+            {jobs.slice(0, 3).map((job) => {
               const statusStyle = getStatusColor(job.status);
               return (
                 <a
@@ -359,9 +383,9 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
           </div>
         )}
 
-        {jobs.length > 0 && (
+        {totalJobs > 3 && (
           <div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
-            <a href="/dashboard" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
+            <a href="/jobs" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
               {t('dashboard.table.view_all')} →
             </a>
           </div>

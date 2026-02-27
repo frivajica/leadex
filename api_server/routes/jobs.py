@@ -100,8 +100,10 @@ async def list_jobs(
     user: dict = Depends(require_auth),
 ):
     """List all jobs for the current user."""
+    from api_server.database import count_jobs
     jobs = get_jobs(user["id"], limit=limit, offset=offset)
-    return {"jobs": jobs}
+    total = count_jobs(user["id"])
+    return {"jobs": jobs, "total": total}
 
 
 @router.get("/{job_id}")
