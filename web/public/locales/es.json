@@ -145,7 +145,52 @@
 			"error_api_key_desc": "Necesitas una clave API de Google Maps. Por favor agrega una en Ajustes.",
 			"success_title": "¡Trabajo Creado!",
 			"success_desc": "Redirigiendo a detalles del trabajo...",
-			"required": "Obligatorio"
+			"required": "Obligatorio",
+			"process_choice": "¿Cómo te gustaría procesar este trabajo?",
+			"use_personal_key": "Usar Clave Personal",
+			"personal_key_desc": "Agrega tu Clave API de Google Places en Ajustes para extraer prospectos ilimitados gratis.",
+			"use_managed_api": "Usar API Administrada",
+			"starts_at": "Desde $5",
+			"managed_api_desc_full": "Sin configuración. Paga con Stripe o usa un plan existente.",
+			"filters": {
+				"no_website": "Solo negocios SIN sitio web",
+				"no_website_desc": "Descarta negocios que ya tengan un sitio web vinculado a su perfil de Google.",
+				"no_social": "Solo negocios SIN perfiles sociales",
+				"no_social_desc": "Descarta negocios que enlazan a una página de redes sociales (Facebook, Instagram) en lugar de un sitio web.",
+				"require_phone": "Requerir Número de Teléfono",
+				"require_phone_desc": "Descarta negocios que no tengan un número de teléfono público.",
+				"require_address": "Requerir Dirección Física",
+				"require_address_desc": "Descarta negocios que no tengan una ubicación física listada.",
+				"min_rating": "Puntuación Mínima",
+				"min_rating_desc": "Descarta negocios con una puntuación menor a tu valor (0.0 a 5.0).",
+				"min_reviews": "Mínimo de Reseñas",
+				"min_reviews_desc": "Descarta negocios con menos reseñas que tu valor.",
+				"min_photos": "Mínimo de Fotos",
+				"min_photos_desc": "Descarta negocios con menos fotos que tu valor."
+			},
+			"groups": {
+				"car_services": "Servicios Automotrices",
+				"restaurants_and_dining": "Restaurantes y Comida",
+				"health_and_medical": "Salud y Medicina",
+				"beauty_and_wellness": "Belleza y Bienestar",
+				"home_services": "Servicios para el Hogar",
+				"shopping_and_retail": "Compras y Retail",
+				"fitness_and_sports": "Deporte y Fitness",
+				"lodging": "Alojamiento",
+				"entertainment_and_leisure": "Entretenimiento y Ocio",
+				"arts_and_culture": "Arte y Cultura",
+				"education": "Educación",
+				"financial_services": "Servicios Financieros",
+				"professional_services": "Servicios Profesionales",
+				"pet_services": "Servicios para Mascotas",
+				"travel_and_transport": "Viaje y Transporte",
+				"religious_places": "Lugares Religiosos",
+				"government_and_civic": "Gobierno y Cívico",
+				"real_estate": "Bienes Raíces",
+				"nature_and_outdoors": "Naturaleza y Aire Libre",
+				"agriculture_and_industry": "Agricultura e Industria",
+				"other": "Otro"
+			}
 		},
 		"status": {
 			"completed": "completado",
@@ -179,6 +224,7 @@
 		"export_failed_desc": "Error al exportar resultados. Por favor, inténtalo de nuevo."
 	},
 	"settings": {
+		"desc": "Administra tu cuenta y claves API",
 		"account": "Cuenta",
 		"account_id": "ID de Cuenta",
 		"api_keys_title": "Claves API de Google Maps",
@@ -231,6 +277,7 @@
 		"get_started": "Empezar"
 	},
 	"common": {
+		"free": "Gratis",
 		"loading": "Cargando...",
 		"error": "Error",
 		"save": "Guardar",

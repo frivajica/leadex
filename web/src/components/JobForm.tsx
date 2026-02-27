@@ -438,7 +438,7 @@ export default function JobForm() {
                   >
                     <div className="flex items-center justify-between w-full">
                       <span className={`block font-medium ${isSelected ? 'text-primary-900' : 'text-slate-900'}`}>
-                        {group.label}
+                        {t(`jobs.form.groups.${group.id}`, group.label)}
                       </span>
                       <div className={`w-5 h-5 shrink-0 rounded-full border flex items-center justify-center transition-colors ${isSelected ? 'border-primary-500 bg-primary-500 text-white' : 'border-slate-300 bg-slate-50'
                         }`}>
@@ -689,12 +689,12 @@ export default function JobForm() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                       </svg>
                     </div>
-                    <span className="font-medium text-gray-900 group-hover:text-primary-700">Use Personal Key</span>
+                    <span className="font-medium text-gray-900 group-hover:text-primary-700">{t('jobs.form.use_personal_key', 'Use Personal Key')}</span>
                   </div>
-                  <span className="text-sm font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded">Free</span>
+                  <span className="text-sm font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded">{t('common.free', 'Free')}</span>
                 </div>
                 <p className="text-xs text-gray-500">
-                  Add your Google Places API Key in Settings to extract unlimited leads for free.
+                  {t('jobs.form.personal_key_desc', 'Add your Google Places API Key in Settings to extract unlimited leads for free.')}
                 </p>
               </a>
 
@@ -707,12 +707,12 @@ export default function JobForm() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                       </svg>
                     </div>
-                    <span className="font-medium text-primary-900">Use Managed API</span>
+                    <span className="font-medium text-primary-900">{t('jobs.form.use_managed_api', 'Use Managed API')}</span>
                   </div>
                   <span className="w-4 h-4 rounded-full border-4 border-primary-600 bg-white"></span>
                 </div>
                 <p className="text-xs text-primary-700">
-                  Zero setup. Pay via Stripe or use an existing subscription plan.
+                  {t('jobs.form.managed_api_desc_full', 'Zero setup. Pay via Stripe or use an existing subscription plan.')}
                 </p>
               </label>
             </div>

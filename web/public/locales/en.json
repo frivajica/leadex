@@ -147,6 +147,11 @@
 			"success_desc": "Redirecting to job details...",
 			"required": "Required",
 			"process_choice": "How would you like to process this job?",
+			"use_personal_key": "Use Personal Key",
+			"personal_key_desc": "Add your Google Places API Key in Settings to extract unlimited leads for free.",
+			"use_managed_api": "Use Managed API",
+			"starts_at": "From $5",
+			"managed_api_desc_full": "Zero setup. Pay via Stripe or use an existing subscription plan.",
 			"filters": {
 				"no_website": "Only businesses WITHOUT a website",
 				"no_website_desc": "Discard businesses that already have a dedicated website linked to their Google Profile.",
@@ -162,6 +167,29 @@
 				"min_reviews_desc": "Discard businesses with fewer reviews than your specified value.",
 				"min_photos": "Minimum Photos",
 				"min_photos_desc": "Discard businesses with fewer photos than your specified value."
+			},
+			"groups": {
+				"car_services": "Car Services",
+				"restaurants_and_dining": "Restaurants & Dining",
+				"health_and_medical": "Health & Medical",
+				"beauty_and_wellness": "Beauty & Wellness",
+				"home_services": "Home Services",
+				"shopping_and_retail": "Shopping & Retail",
+				"fitness_and_sports": "Fitness & Sports",
+				"lodging": "Lodging",
+				"entertainment_and_leisure": "Entertainment & Leisure",
+				"arts_and_culture": "Arts & Culture",
+				"education": "Education",
+				"financial_services": "Financial Services",
+				"professional_services": "Professional Services",
+				"pet_services": "Pet Services",
+				"travel_and_transport": "Travel & Transport",
+				"religious_places": "Religious Places",
+				"government_and_civic": "Government & Civic",
+				"real_estate": "Real Estate",
+				"nature_and_outdoors": "Nature & Outdoors",
+				"agriculture_and_industry": "Agriculture & Industry",
+				"other": "Other"
 			}
 		},
 		"status": {
@@ -196,6 +224,7 @@
 		"export_failed_desc": "Failed to export results. Please try again."
 	},
 	"settings": {
+		"desc": "Manage your account and API keys",
 		"account": "Account",
 		"account_id": "Account ID",
 		"api_keys_title": "Google Maps API Keys",
@@ -248,6 +277,7 @@
 		"get_started": "Get Started"
 	},
 	"common": {
+		"free": "Free",
 		"loading": "Loading...",
 		"error": "Error",
 		"save": "Save",
