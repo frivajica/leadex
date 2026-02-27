@@ -3,7 +3,7 @@ import os
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import jwt
-from passlib.hash import bcrypt
+import bcrypt
 from fastapi import Request
 
 from api_server.database import (
@@ -182,14 +182,18 @@ def get_current_user(request: Request = None, authorization: str = None) -> Opti
 
 def hash_password(password: str) -> str:
     """Hash a password using bcrypt."""
-    return bcrypt.hash(password)
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
 
 
 def verify_password(password: str, password_hash: str) -> bool:
     """Verify a password against a hash."""
     if not password_hash:
         return False
-    return bcrypt.verify(password, password_hash)
+    try:
+        return bcrypt.checkpw(password.encode('utf-8'), password_hash.encode('utf-8'))
+    except Exception:
+        return False
 
 
 def register_with_password(email: str, password: str) -> tuple[bool, str, Optional[dict]]:
@@ -199,7 +203,7 @@ def register_with_password(email: str, password: str) -> tuple[bool, str, Option
     if user:
         # Check if user already has a password set
         if user.get("password_hash"):
-            return False, "Email already registered", None
+            return False, "This email is already registered. Please log in instead.", None
         # User exists but no password - set password
         password_hash = hash_password(password)
         update_user_password(user["id"], password_hash)
@@ -218,12 +222,12 @@ def login_with_password(email: str, password: str) -> tuple[bool, str, Optional[
     user = get_user_by_email(email)
 
     if not user:
-        return False, "Invalid email or password", None
+        return False, "We couldn't find an account with that email. Please check for typos or register.", None
 
     if not user.get("password_hash"):
-        return False, "Invalid email or password", None
+        return False, "This account uses a magic link to sign in. Please use the magic link option instead.", None
 
     if not verify_password(password, user["password_hash"]):
-        return False, "Invalid email or password", None
+        return False, "The password you entered is incorrect. Please try again.", None
 
     return True, "Login successful", {"id": user["id"], "email": user["email"]}

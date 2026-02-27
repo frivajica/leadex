@@ -132,8 +132,8 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
   return (
     <div className="animate-fade-in">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">{t('dashboard.title')}</h1>
-        <p className="text-gray-500 mt-1">{t('dashboard.desc')}</p>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">{t('dashboard.title')}</h1>
+        <p className="text-slate-500 mt-2 leading-relaxed">{t('dashboard.desc')}</p>
       </div>
 
       {/* Account Status Widget */}
@@ -221,14 +221,14 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white rounded-xl shadow-card p-5 border border-gray-100 hover:shadow-card-hover transition-shadow">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="bg-white rounded-2xl shadow-premium p-6 ring-1 ring-slate-200/50 hover:shadow-premium-hover transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500">{t('dashboard.stats.total_jobs')}</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{totalJobs}</p>
+              <p className="text-sm font-medium text-slate-500">{t('dashboard.stats.total_jobs')}</p>
+              <p className="text-3xl font-bold tracking-tight text-slate-900 mt-2">{totalJobs}</p>
             </div>
-            <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center ring-1 ring-primary-500/10">
               <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
@@ -236,13 +236,13 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-card p-5 border border-gray-100 hover:shadow-card-hover transition-shadow">
+        <div className="bg-white rounded-2xl shadow-premium p-6 ring-1 ring-slate-200/50 hover:shadow-premium-hover transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500">{t('dashboard.stats.completed')}</p>
-              <p className="text-2xl font-bold text-green-600 mt-1">{completedJobs}</p>
+              <p className="text-sm font-medium text-slate-500">{t('dashboard.stats.completed')}</p>
+              <p className="text-3xl font-bold tracking-tight text-green-600 mt-2">{completedJobs}</p>
             </div>
-            <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center ring-1 ring-green-500/10">
               <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -250,27 +250,27 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-card p-5 border border-gray-100 hover:shadow-card-hover transition-shadow">
+        <div className="bg-white rounded-2xl shadow-premium p-6 ring-1 ring-slate-200/50 hover:shadow-premium-hover transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500">{t('dashboard.stats.total_leads')}</p>
-              <p className="text-2xl font-bold text-accent-600 mt-1">{totalLeads.toLocaleString()}</p>
+              <p className="text-sm font-medium text-slate-500">{t('dashboard.stats.total_leads')}</p>
+              <p className="text-3xl font-bold tracking-tight text-accent-600 mt-2">{totalLeads.toLocaleString()}</p>
             </div>
-            <div className="w-12 h-12 bg-accent-50 rounded-xl flex items-center justify-center">
-              <svg className="w-6 h-6 text_accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-12 h-12 bg-accent-50 rounded-xl flex items-center justify-center ring-1 ring-accent-500/10">
+              <svg className="w-6 h-6 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-card p-5 border border-gray-100 hover:shadow-card-hover transition-shadow">
+        <div className="bg-white rounded-2xl shadow-premium p-6 ring-1 ring-slate-200/50 hover:shadow-premium-hover transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-500">{t('dashboard.stats.running')}</p>
-              <p className="text-2xl font-bold text-blue-600 mt-1">{runningJobs}</p>
+              <p className="text-sm font-medium text-slate-500">{t('dashboard.stats.running')}</p>
+              <p className="text-3xl font-bold tracking-tight text-blue-600 mt-2">{runningJobs}</p>
             </div>
-            <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center ring-1 ring-blue-500/10">
               <svg className={`w-6 h-6 text-blue-600${runningJobs > 0 ? ' animate-spin-slow' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
@@ -282,7 +282,7 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
       <div className="mb-8">
         <a
           href="/jobs/new"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all duration-200 shadow-lg hover:shadow-xl font-medium"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 hover:shadow-lg transition-all duration-200 active:scale-95 font-medium shadow-sm"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -291,26 +291,28 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
         </a>
       </div>
 
-      <div className="bg-white rounded-xl shadow-card overflow-hidden border border-gray-100">
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">{t('dashboard.table.recent_jobs')}</h2>
+      <div className="bg-white rounded-2xl shadow-premium overflow-hidden ring-1 ring-slate-200/50">
+        <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+          <h2 className="text-lg font-semibold text-slate-900">{t('dashboard.table.recent_jobs')}</h2>
           {jobs.length > 0 && (
-            <span className="text-sm text-gray-500">{jobs.length} job{jobs.length !== 1 ? 's' : ''}</span>
+            <span className="text-sm font-medium text-slate-500 bg-white px-2.5 py-1 rounded-full ring-1 ring-slate-200/50">
+              {jobs.length} job{jobs.length !== 1 ? 's' : ''}
+            </span>
           )}
         </div>
 
         {jobs.length === 0 ? (
-          <div className="p-12 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="p-16 text-center bg-slate-50/30">
+            <div className="w-20 h-20 bg-white shadow-sm ring-1 ring-slate-200/50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <svg className="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">{t('dashboard.table.no_jobs')}</h3>
-            <p className="text-gray-500 mb-6">{t('dashboard.table.no_jobs_desc')}</p>
+            <h3 className="text-xl font-semibold text-slate-900 mb-2">{t('dashboard.table.no_jobs')}</h3>
+            <p className="text-slate-500 mb-8 max-w-sm mx-auto leading-relaxed">{t('dashboard.table.no_jobs_desc')}</p>
             <a
               href="/jobs/new"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-all duration-200 active:scale-95 shadow-sm font-medium"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -319,31 +321,31 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
             </a>
           </div>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-slate-100">
             {jobs.slice(0, 3).map((job) => {
               const statusStyle = getStatusColor(job.status);
               return (
                 <a
                   key={job.id}
                   href={`/jobs/${job.id}`}
-                  className="block px-6 py-4 hover:bg-gray-50 transition-colors group"
+                  className="block px-6 py-5 hover:bg-slate-50/80 transition-all duration-200 group active:bg-slate-100/50"
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${statusStyle.bg}`}>
-                        <div className={`w-2 h-2 rounded-full ${statusStyle.dot}`}></div>
+                    <div className="flex items-center gap-5">
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm ring-1 ring-slate-900/5 group-hover:scale-105 transition-transform duration-300 ${statusStyle.bg}`}>
+                        <div className={`w-2.5 h-2.5 rounded-full ${statusStyle.dot}`}></div>
                       </div>
                       <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-gray-900 group-hover:text-primary-600 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <span className="font-semibold text-slate-900 group-hover:text-primary-700 transition-colors">
                             {job.name}
                           </span>
-                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${statusStyle.bg} ${statusStyle.text}`}>
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${statusStyle.bg} ${statusStyle.text} ring-1 ring-inset ring-slate-900/5`}>
                             {getStatusIcon(job.status)}
                             {t(`jobs.status.${job.status}`)}
                           </span>
                         </div>
-                        <div className="text-sm text-gray-500 mt-0.5">
+                        <div className="text-sm font-medium text-slate-500 mt-1 flex items-center gap-2">
                           {new Date(job.created_at).toLocaleDateString(undefined, {
                             month: 'short',
                             day: 'numeric',

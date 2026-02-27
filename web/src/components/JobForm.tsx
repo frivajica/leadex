@@ -234,483 +234,448 @@ export default function JobForm() {
         </div>
       )}
 
-      {/* Job Name */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          {t('jobs.form.name')} <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => { setName(e.target.value); setError(''); }}
-          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-          placeholder={t('jobs.form.name_placeholder')}
-        />
-      </div>
-
-      {/* Location */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          {t('jobs.form.location')} <span className="text-red-500">*</span>
-        </label>
-
-        {/* Segmented Control */}
-        <div className="flex rounded-lg border border-gray-200 p-1 bg-gray-50 mb-3">
-          <button
-            type="button"
-            onClick={() => setLocationMode(LocationMode.Detect)}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${locationMode === LocationMode.Detect
-              ? 'bg-white text-primary-700 shadow-sm'
-              : 'text-gray-500 hover:text-gray-700'
-              }`}
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            {t('jobs.form.detect_location', 'Detect Location')}
-          </button>
-          <button
-            type="button"
-            onClick={() => setLocationMode(LocationMode.Manual)}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${locationMode === LocationMode.Manual
-              ? 'bg-white text-primary-700 shadow-sm'
-              : 'text-gray-500 hover:text-gray-700'
-              }`}
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            {t('jobs.form.enter_manually', 'Enter Manually')}
-          </button>
+      {/* Card 1: Basic Information */}
+      <div className="bg-white rounded-2xl shadow-premium ring-1 ring-slate-200/50 p-6 sm:p-8 space-y-6">
+        <div className="border-b border-slate-100 pb-4 mb-6">
+          <h2 className="text-lg font-semibold text-slate-900">Basic Information</h2>
+          <p className="text-sm text-slate-500 mt-1">Name your job and set the target location.</p>
         </div>
 
-        {locationMode === LocationMode.Detect ? (
-          <div className="space-y-3">
+        {/* Job Name */}
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-2">
+            {t('jobs.form.name')} <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => { setName(e.target.value); setError(''); }}
+            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-slate-900"
+            placeholder={t('jobs.form.name_placeholder')}
+          />
+        </div>
+
+        {/* Location */}
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-2">
+            {t('jobs.form.location')} <span className="text-red-500">*</span>
+          </label>
+
+          {/* Segmented Control */}
+          <div className="flex rounded-xl p-1 bg-slate-100/80 mb-4 ring-1 ring-slate-200/50">
             <button
               type="button"
-              onClick={getCurrentLocation}
-              disabled={locationLoading}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 text-sm font-medium transition-colors"
+              onClick={() => setLocationMode(LocationMode.Detect)}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${locationMode === LocationMode.Detect
+                ? 'bg-white text-primary-700 shadow-sm ring-1 ring-slate-200/50'
+                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
+                }`}
             >
-              {locationLoading ? (
-                <>
-                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                  {t('jobs.form.getting_location')}
-                </>
-              ) : (
-                <>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  {t('jobs.form.use_my_location')}
-                </>
-              )}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              {t('jobs.form.detect_location', 'Detect Location')}
             </button>
-            {address && (
-              <div className="flex items-start gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
-                <svg className="w-4 h-4 text-green-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span className="text-sm text-green-700">{address}</span>
+            <button
+              type="button"
+              onClick={() => setLocationMode(LocationMode.Manual)}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${locationMode === LocationMode.Manual
+                ? 'bg-white text-primary-700 shadow-sm ring-1 ring-slate-200/50'
+                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
+                }`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              {t('jobs.form.enter_manually', 'Enter Manually')}
+            </button>
+          </div>
+
+          {locationMode === LocationMode.Detect ? (
+            <div className="space-y-3">
+              <button
+                type="button"
+                onClick={getCurrentLocation}
+                disabled={locationLoading}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 text-slate-700 rounded-xl hover:bg-slate-200 disabled:opacity-50 text-sm font-medium transition-colors"
+              >
+                {locationLoading ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    {t('jobs.form.getting_location')}
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    {t('jobs.form.use_my_location')}
+                  </>
+                )}
+              </button>
+              {address && (
+                <div className="flex items-start gap-2 p-3 mt-3 bg-green-50/50 border border-green-200/60 rounded-xl">
+                  <svg className="w-4 h-4 text-green-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-sm font-medium text-green-700 leading-tight">{address}</span>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1.5">
+                  {t('jobs.form.latitude', 'Latitude')}
+                </label>
+                <input
+                  type="number"
+                  step="any"
+                  value={lat}
+                  onChange={(e) => { setLat(e.target.value); setError(''); }}
+                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-slate-900"
+                  placeholder="e.g. 19.4326"
+                />
               </div>
-            )}
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">
-                {t('jobs.form.latitude', 'Latitude')}
-              </label>
-              <input
-                type="number"
-                step="any"
-                value={lat}
-                onChange={(e) => { setLat(e.target.value); setError(''); }}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                placeholder="e.g. 19.4326"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">
-                {t('jobs.form.longitude', 'Longitude')}
-              </label>
-              <input
-                type="number"
-                step="any"
-                value={lng}
-                onChange={(e) => { setLng(e.target.value); setError(''); }}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                placeholder="e.g. -99.1332"
-              />
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Radius */}
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <label className="block text-sm font-medium text-gray-700">{t('jobs.form.search_radius')}</label>
-          <span className="text-sm font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
-            {formatRadius(radius)}
-          </span>
-        </div>
-        <input
-          type="range"
-          min="100"
-          max="50000"
-          step="100"
-          value={radius}
-          onChange={(e) => setRadius(Number(e.target.value))}
-          className="w-full h-2 bg-gray-200 rounded-lg accent-primary-600"
-        />
-        <div className="flex justify-between text-xs text-gray-500 mt-1">
-          <span>100m</span>
-          <span>50km</span>
-        </div>
-      </div>
-
-      {/* Category Groups */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <label className="block text-sm font-medium text-gray-700">
-            {t('jobs.form.business_categories', 'Business Categories')} <span className="text-red-500">*</span>
-          </label>
-          {groups && (
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setSelectedGroups(groups.map(g => g.id))}
-                className="text-xs text-primary-600 hover:text-primary-700 font-medium"
-              >
-                {t('jobs.form.select_all')}
-              </button>
-              <span className="text-gray-300">|</span>
-              <button
-                type="button"
-                onClick={() => setSelectedGroups([])}
-                className="text-xs text-gray-500 hover:text-gray-700 font-medium"
-              >
-                {t('jobs.form.deselect_all')}
-              </button>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1.5">
+                  {t('jobs.form.longitude', 'Longitude')}
+                </label>
+                <input
+                  type="number"
+                  step="any"
+                  value={lng}
+                  onChange={(e) => { setLng(e.target.value); setError(''); }}
+                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-slate-900"
+                  placeholder="e.g. -99.1332"
+                />
+              </div>
             </div>
           )}
         </div>
 
-        {groups === null ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {Array.from({ length: 9 }).map((_, i) => (
-              <div key={i} className="animate-pulse bg-gray-200 rounded-xl h-20" />
-            ))}
+        {/* Radius */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <label className="block text-sm font-medium text-slate-700">{t('jobs.form.search_radius')}</label>
+            <span className="text-sm font-medium text-primary-700 bg-primary-100/50 px-2.5 py-0.5 rounded-full ring-1 ring-primary-500/20">
+              {formatRadius(radius)}
+            </span>
           </div>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {groups.map(group => {
-              const isSelected = selectedGroups.includes(group.id);
-              return (
-                <button
-                  key={group.id}
-                  type="button"
-                  onClick={() => toggleGroup(group.id)}
-                  className={`flex flex-col items-center justify-center gap-1.5 p-4 rounded-xl border-2 transition-all text-center ${isSelected
-                    ? 'border-primary-500 bg-primary-50 shadow-sm'
-                    : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
-                    }`}
-                >
-                  <span className="text-2xl">{group.icon}</span>
-                  <span className={`text-xs font-medium leading-tight ${isSelected ? 'text-primary-700' : 'text-gray-700'}`}>
-                    {group.label}
-                  </span>
-                  <span className={`text-[10px] ${isSelected ? 'text-primary-500' : 'text-gray-400'}`}>
-                    {group.count} {group.count === 1 ? 'type' : 'types'}
-                  </span>
-                </button>
-              );
-            })}
+          <input
+            type="range"
+            min="1000"
+            max="15000"
+            step="1000"
+            value={radius}
+            onChange={(e) => setRadius(parseInt(e.target.value))}
+            className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary-600 hover:accent-primary-700 transition-all"
+          />
+          <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <span>100m</span>
+            <span>50km</span>
           </div>
-        )}
-        {selectedGroups.length > 0 && (
-          <p className="mt-2 text-sm text-gray-500">
-            {t('jobs.form.categories_selected', { count: selectedGroups.length })} group{selectedGroups.length !== 1 ? 's' : ''}
-          </p>
-        )}
-        {selectedGroups.length === 0 && groups !== null && (
-          <p className="mt-2 text-xs text-amber-600">
-            {t('jobs.form.select_at_least_one', 'Select at least one category group to continue')}
-          </p>
-        )}
-      </div>
+        </div>
 
-      {/* Quality Filters */}
-      <div className="border-t border-gray-200 pt-6">
-        <button
-          type="button"
-          onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center justify-between w-full"
-        >
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${showFilters ? 'bg-primary-100' : 'bg-gray-100'}`}>
-              <svg className={`w-5 h-5 ${showFilters ? 'text-primary-600' : 'text-gray-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-              </svg>
-            </div>
-            <div className="text-left flex items-center gap-2">
-              <div>
-                <span className="block text-sm font-medium text-gray-900">{t('jobs.form.quality_filters')}</span>
-                <span className="block text-xs text-gray-500">{t('jobs.form.quality_filters_desc')}</span>
+        {/* Category Groups */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <label className="block text-sm font-medium text-gray-700">
+              {t('jobs.form.business_categories', 'Business Categories')} <span className="text-red-500">*</span>
+            </label>
+            {groups && (
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedGroups(groups.map(g => g.id))}
+                  className="text-xs text-primary-600 hover:text-primary-700 font-medium"
+                >
+                  {t('jobs.form.select_all')}
+                </button>
+                <span className="text-gray-300">|</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedGroups([])}
+                  className="text-xs text-gray-500 hover:text-gray-700 font-medium"
+                >
+                  {t('jobs.form.deselect_all')}
+                </button>
               </div>
+            )}
+          </div>
+        </div>
+
+        {/* Quality Filters Card */}
+        <div className="bg-white rounded-2xl shadow-premium ring-1 ring-slate-200/50 p-6 sm:p-8 space-y-4">
+          <button
+            type="button"
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center justify-between w-full group"
+          >
+            <div className="flex items-center gap-4">
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${showFilters ? 'bg-primary-100 text-primary-600' : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200/80 group-hover:text-slate-700'}`}>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                </svg>
+              </div>
+              <div className="text-left">
+                <span className="block text-lg font-semibold text-slate-900 group-hover:text-primary-700 transition-colors">{t('jobs.form.quality_filters')}</span>
+                <span className="block text-sm text-slate-500 mt-0.5">{t('jobs.form.quality_filters_desc')}</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
               {activeFiltersCount > 0 && (
-                <span className="inline-flex items-center justify-center px-2 py-0.5 ml-2 text-xs font-medium text-primary-700 bg-primary-100 rounded-full">
-                  {activeFiltersCount}
+                <span className="inline-flex items-center justify-center px-2.5 py-1 text-xs font-semibold text-primary-700 bg-primary-100 rounded-full ring-1 ring-primary-500/20">
+                  {activeFiltersCount} Active
                 </span>
               )}
+              <svg className={`w-5 h-5 text-slate-400 transform transition-transform duration-300 ${showFilters ? 'rotate-180 text-primary-500' : 'group-hover:text-slate-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
             </div>
+          </button>
+
+          {showFilters && (
+            <div className="pt-6 mt-6 border-t border-slate-100 space-y-6 animate-fade-in">
+              <label className="flex items-start cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={requireNoWebsite}
+                  onChange={(e) => setRequireNoWebsite(e.target.checked)}
+                  className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
+                />
+                <div className="ml-3">
+                  <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.no_website')}</span>
+                  <span className="block text-xs text-gray-500">{t('jobs.form.filters.no_website_desc')}</span>
+                </div>
+              </label>
+
+              {/* Social */}
+              <label className="flex items-start cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={requireNoSocial}
+                  onChange={(e) => setRequireNoSocial(e.target.checked)}
+                  className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
+                />
+                <div className="ml-3">
+                  <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.no_social')}</span>
+                  <span className="block text-xs text-gray-500">{t('jobs.form.filters.no_social_desc')}</span>
+                </div>
+              </label>
+
+              {/* Phone */}
+              <label className="flex items-start cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={requirePhone}
+                  onChange={(e) => setRequirePhone(e.target.checked)}
+                  className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
+                />
+                <div className="ml-3">
+                  <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.require_phone')}</span>
+                  <span className="block text-xs text-gray-500">{t('jobs.form.filters.require_phone_desc')}</span>
+                </div>
+              </label>
+
+              {/* Address */}
+              <label className="flex items-start cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={requireAddress}
+                  onChange={(e) => setRequireAddress(e.target.checked)}
+                  className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
+                />
+                <div className="ml-3">
+                  <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.require_address')}</span>
+                  <span className="block text-xs text-gray-500">{t('jobs.form.filters.require_address_desc')}</span>
+                </div>
+              </label>
+
+              {/* Rating */}
+              <div className="pt-3 border-t border-gray-100">
+                <label className="flex items-start cursor-pointer mb-2">
+                  <input
+                    type="checkbox"
+                    checked={useMinRating}
+                    onChange={(e) => setUseMinRating(e.target.checked)}
+                    className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
+                  />
+                  <div className="ml-3">
+                    <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.min_rating')}</span>
+                    <span className="block text-xs text-gray-500">{t('jobs.form.filters.min_rating_desc')}</span>
+                  </div>
+                </label>
+                {useMinRating && (
+                  <div className="ml-7 mt-2">
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="5"
+                      value={minRating}
+                      onChange={(e) => setMinRating(Number(e.target.value))}
+                      className="w-full max-w-[120px] px-3 py-2 border border-gray-300 rounded-lg text-sm transition-all"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Reviews */}
+              <div className="pt-3 border-t border-gray-100">
+                <label className="flex items-start cursor-pointer mb-2">
+                  <input
+                    type="checkbox"
+                    checked={useMinReviews}
+                    onChange={(e) => setUseMinReviews(e.target.checked)}
+                    className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
+                  />
+                  <div className="ml-3">
+                    <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.min_reviews')}</span>
+                    <span className="block text-xs text-gray-500">{t('jobs.form.filters.min_reviews_desc')}</span>
+                  </div>
+                </label>
+                {useMinReviews && (
+                  <div className="ml-7 mt-2">
+                    <input
+                      type="number"
+                      min="0"
+                      value={minReviews}
+                      onChange={(e) => setMinReviews(Number(e.target.value))}
+                      className="w-full max-w-[120px] px-3 py-2 border border-gray-300 rounded-lg text-sm transition-all"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Photos */}
+              <div className="pt-3 border-t border-gray-100">
+                <label className="flex items-start cursor-pointer mb-2">
+                  <input
+                    type="checkbox"
+                    checked={useMinPhotos}
+                    onChange={(e) => setUseMinPhotos(e.target.checked)}
+                    className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
+                  />
+                  <div className="ml-3">
+                    <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.min_photos')}</span>
+                    <span className="block text-xs text-gray-500">{t('jobs.form.filters.min_photos_desc')}</span>
+                  </div>
+                </label>
+                {useMinPhotos && (
+                  <div className="ml-7 mt-2">
+                    <input
+                      type="number"
+                      min="0"
+                      value={minPhotos}
+                      onChange={(e) => setMinPhotos(Number(e.target.value))}
+                      className="w-full max-w-[120px] px-3 py-2 border border-gray-300 rounded-lg text-sm transition-all"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Sort */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">{t('jobs.form.sort_by')}</label>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => setSortBy('score')}
+              className={`flex items-center justify-center gap-2 p-3 border rounded-lg transition-colors ${sortBy === 'score'
+                ? 'border-primary-500 bg-primary-50 text-primary-700'
+                : 'border-gray-200 hover:border-gray-300'
+                }`}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+              <span className="text-sm font-medium">{t('jobs.form.sort_score')}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setSortBy('distance')}
+              className={`flex items-center justify-center gap-2 p-3 border rounded-lg transition-colors ${sortBy === 'distance'
+                ? 'border-primary-500 bg-primary-50 text-primary-700'
+                : 'border-gray-200 hover:border-gray-300'
+                }`}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span className="text-sm font-medium">{t('jobs.form.sort_distance')}</span>
+            </button>
           </div>
-          <svg className={`w-5 h-5 text-gray-400 transform transition-transform ${showFilters ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
+        </div>
 
-        {showFilters && (
-          <div className="mt-4 space-y-4">
-            {/* Website */}
-            <label className="flex items-start cursor-pointer">
-              <input
-                type="checkbox"
-                checked={requireNoWebsite}
-                onChange={(e) => setRequireNoWebsite(e.target.checked)}
-                className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
-              />
-              <div className="ml-3">
-                <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.no_website')}</span>
-                <span className="block text-xs text-gray-500">{t('jobs.form.filters.no_website_desc')}</span>
-              </div>
+        {/* Payment / API Key Choice */}
+        {hasApiKey === false && (
+          <div className="border-t border-gray-200 pt-6">
+            <label className="block text-sm font-medium text-gray-900 mb-4">
+              {t('jobs.form.process_choice', 'How would you like to process this job?')}
             </label>
-
-            {/* Social */}
-            <label className="flex items-start cursor-pointer">
-              <input
-                type="checkbox"
-                checked={requireNoSocial}
-                onChange={(e) => setRequireNoSocial(e.target.checked)}
-                className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
-              />
-              <div className="ml-3">
-                <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.no_social')}</span>
-                <span className="block text-xs text-gray-500">{t('jobs.form.filters.no_social_desc')}</span>
-              </div>
-            </label>
-
-            {/* Phone */}
-            <label className="flex items-start cursor-pointer">
-              <input
-                type="checkbox"
-                checked={requirePhone}
-                onChange={(e) => setRequirePhone(e.target.checked)}
-                className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
-              />
-              <div className="ml-3">
-                <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.require_phone')}</span>
-                <span className="block text-xs text-gray-500">{t('jobs.form.filters.require_phone_desc')}</span>
-              </div>
-            </label>
-
-            {/* Address */}
-            <label className="flex items-start cursor-pointer">
-              <input
-                type="checkbox"
-                checked={requireAddress}
-                onChange={(e) => setRequireAddress(e.target.checked)}
-                className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
-              />
-              <div className="ml-3">
-                <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.require_address')}</span>
-                <span className="block text-xs text-gray-500">{t('jobs.form.filters.require_address_desc')}</span>
-              </div>
-            </label>
-
-            {/* Rating */}
-            <div className="pt-3 border-t border-gray-100">
-              <label className="flex items-start cursor-pointer mb-2">
-                <input
-                  type="checkbox"
-                  checked={useMinRating}
-                  onChange={(e) => setUseMinRating(e.target.checked)}
-                  className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
-                />
-                <div className="ml-3">
-                  <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.min_rating')}</span>
-                  <span className="block text-xs text-gray-500">{t('jobs.form.filters.min_rating_desc')}</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <a
+                href="/settings"
+                className="relative flex flex-col p-4 border border-gray-200 rounded-xl hover:border-primary-500 hover:bg-primary-50 transition-colors cursor-pointer group"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center text-green-600">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                      </svg>
+                    </div>
+                    <span className="font-medium text-gray-900 group-hover:text-primary-700">Use Personal Key</span>
+                  </div>
+                  <span className="text-sm font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded">Free</span>
                 </div>
+                <p className="text-xs text-gray-500">
+                  Add your Google Places API Key in Settings to extract unlimited leads for free.
+                </p>
+              </a>
+
+              <label className="relative flex flex-col p-4 border-2 border-primary-500 bg-primary-50 rounded-xl cursor-pointer">
+                <input type="radio" name="payment_choice" value="managed" checked readOnly className="sr-only" />
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-primary-200 flex items-center justify-center text-primary-700">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </div>
+                    <span className="font-medium text-primary-900">Use Managed API</span>
+                  </div>
+                  <span className="w-4 h-4 rounded-full border-4 border-primary-600 bg-white"></span>
+                </div>
+                <p className="text-xs text-primary-700">
+                  Zero setup. Pay via Stripe or use an existing subscription plan.
+                </p>
               </label>
-              {useMinRating && (
-                <div className="ml-7 mt-2">
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    max="5"
-                    value={minRating}
-                    onChange={(e) => setMinRating(Number(e.target.value))}
-                    className="w-full max-w-[120px] px-3 py-2 border border-gray-300 rounded-lg text-sm transition-all"
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Reviews */}
-            <div className="pt-3 border-t border-gray-100">
-              <label className="flex items-start cursor-pointer mb-2">
-                <input
-                  type="checkbox"
-                  checked={useMinReviews}
-                  onChange={(e) => setUseMinReviews(e.target.checked)}
-                  className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
-                />
-                <div className="ml-3">
-                  <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.min_reviews')}</span>
-                  <span className="block text-xs text-gray-500">{t('jobs.form.filters.min_reviews_desc')}</span>
-                </div>
-              </label>
-              {useMinReviews && (
-                <div className="ml-7 mt-2">
-                  <input
-                    type="number"
-                    min="0"
-                    value={minReviews}
-                    onChange={(e) => setMinReviews(Number(e.target.value))}
-                    className="w-full max-w-[120px] px-3 py-2 border border-gray-300 rounded-lg text-sm transition-all"
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Photos */}
-            <div className="pt-3 border-t border-gray-100">
-              <label className="flex items-start cursor-pointer mb-2">
-                <input
-                  type="checkbox"
-                  checked={useMinPhotos}
-                  onChange={(e) => setUseMinPhotos(e.target.checked)}
-                  className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
-                />
-                <div className="ml-3">
-                  <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.min_photos')}</span>
-                  <span className="block text-xs text-gray-500">{t('jobs.form.filters.min_photos_desc')}</span>
-                </div>
-              </label>
-              {useMinPhotos && (
-                <div className="ml-7 mt-2">
-                  <input
-                    type="number"
-                    min="0"
-                    value={minPhotos}
-                    onChange={(e) => setMinPhotos(Number(e.target.value))}
-                    className="w-full max-w-[120px] px-3 py-2 border border-gray-300 rounded-lg text-sm transition-all"
-                  />
-                </div>
-              )}
             </div>
           </div>
         )}
+
       </div>
-
-      {/* Sort */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">{t('jobs.form.sort_by')}</label>
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            onClick={() => setSortBy('score')}
-            className={`flex items-center justify-center gap-2 p-3 border rounded-lg transition-colors ${sortBy === 'score'
-              ? 'border-primary-500 bg-primary-50 text-primary-700'
-              : 'border-gray-200 hover:border-gray-300'
-              }`}
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-            </svg>
-            <span className="text-sm font-medium">{t('jobs.form.sort_score')}</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setSortBy('distance')}
-            className={`flex items-center justify-center gap-2 p-3 border rounded-lg transition-colors ${sortBy === 'distance'
-              ? 'border-primary-500 bg-primary-50 text-primary-700'
-              : 'border-gray-200 hover:border-gray-300'
-              }`}
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <span className="text-sm font-medium">{t('jobs.form.sort_distance')}</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Payment / API Key Choice */}
-      {hasApiKey === false && (
-        <div className="border-t border-gray-200 pt-6">
-          <label className="block text-sm font-medium text-gray-900 mb-4">
-            {t('jobs.form.process_choice', 'How would you like to process this job?')}
-          </label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <a
-              href="/settings"
-              className="relative flex flex-col p-4 border border-gray-200 rounded-xl hover:border-primary-500 hover:bg-primary-50 transition-colors cursor-pointer group"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center text-green-600">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                    </svg>
-                  </div>
-                  <span className="font-medium text-gray-900 group-hover:text-primary-700">Use Personal Key</span>
-                </div>
-                <span className="text-sm font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded">Free</span>
-              </div>
-              <p className="text-xs text-gray-500">
-                Add your Google Places API Key in Settings to extract unlimited leads for free.
-              </p>
-            </a>
-
-            <label className="relative flex flex-col p-4 border-2 border-primary-500 bg-primary-50 rounded-xl cursor-pointer">
-              <input type="radio" name="payment_choice" value="managed" checked readOnly className="sr-only" />
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-primary-200 flex items-center justify-center text-primary-700">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                  </div>
-                  <span className="font-medium text-primary-900">Use Managed API</span>
-                </div>
-                <span className="w-4 h-4 rounded-full border-4 border-primary-600 bg-white"></span>
-              </div>
-              <p className="text-xs text-primary-700">
-                Zero setup. Pay via Stripe or use an existing subscription plan.
-              </p>
-            </label>
-          </div>
-        </div>
-      )}
 
       {/* Submit */}
-      <div>
+      <div className="pt-4">
         <button
           type="submit"
           disabled={!isValid || loading}
-          className="w-full flex justify-center items-center gap-2 py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-all"
+          className="w-full flex justify-center items-center gap-2 py-4 px-6 rounded-2xl shadow-premium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold transition-all duration-200 active:scale-95 text-lg"
         >
           {loading ? (
-            <span className="flex items-center gap-2">
+            <span className="flex items-center gap-3">
               <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
@@ -727,7 +692,7 @@ export default function JobForm() {
           )}
         </button>
         {!isValid && !loading && (
-          <p className="mt-2 text-xs text-gray-400 text-center">
+          <p className="mt-3 text-sm font-medium text-slate-400 text-center animate-fade-in">
             {t('jobs.form.missing_fields', 'Missing')}: {getMissingHints().join(', ')}
           </p>
         )}
