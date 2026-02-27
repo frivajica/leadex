@@ -120,6 +120,34 @@ Webhooks are how Stripe notifies your server that a payment succeeded.
 
 Currency is automatically determined by the user's IP address (Mexico → MXN, everywhere else → USD).
 
+## Email Setup (Resend)
+
+Magic link emails are sent via [Resend](https://resend.com). Resend offers a **free tier** with 3,000 emails/month.
+
+### Quick Setup
+
+1. Sign up at [resend.com](https://resend.com) and copy your API key
+2. Add it to your `.env`:
+   ```bash
+   RESEND_API_KEY=re_...
+   ```
+3. Restart the backend
+
+### Sender Address
+
+By default, emails are sent from `onboarding@resend.dev` (Resend's shared sandbox domain). To use your own domain:
+
+1. Go to **Resend Dashboard** > **Domains** > **Add Domain**
+2. Add the DNS records Resend provides
+3. Update `FROM_EMAIL` in your `.env`:
+   ```bash
+   FROM_EMAIL=noreply@yourdomain.com
+   ```
+
+### Mock Mode (No Key)
+
+If `RESEND_API_KEY` is not set, emails are printed to the backend console. This is the default for local development — no configuration needed.
+
 ## API Endpoints
 
 ### Authentication
@@ -174,6 +202,7 @@ lead-extractor/
 │   ├── main.py              # FastAPI app, auth endpoints
 │   ├── database.py          # SQLite models and queries
 │   ├── auth.py              # JWT, magic links, password auth
+│   ├── email_provider.py    # Resend + mock email dispatch
 │   ├── requirements.txt
 │   ├── Dockerfile
 │   ├── routes/
@@ -240,17 +269,12 @@ lead-extractor/
 |----------|-------------|---------|
 | `SECRET_KEY` | JWT secret key | Auto-generated |
 | `DATABASE_URL` | SQLite path | `sqlite:///./data/leads.db` |
-| `CORS_ORIGINS` | Allowed origins | `http://localhost:4321` |
-| `APP_URL` | App URL for magic links | `http://localhost:4321` |
-| `SMTP_HOST` | SMTP server for emails | — |
-| `SMTP_PORT` | SMTP port | `587` |
-| `SMTP_USER` | SMTP username | — |
-| `SMTP_PASSWORD` | SMTP password | — |
-| `FROM_EMAIL` | Sender email address | `noreply@leadextractor.app` |
+| `FRONTEND_URL` | Frontend URL (used for CORS, magic links, Stripe redirects) | `http://localhost:4321` |
+| `RESEND_API_KEY` | Resend API key (free tier available) | — (mock mode) |
+| `FROM_EMAIL` | Sender email address | `onboarding@resend.dev` |
 | `PUBLIC_API_URL` | API URL for frontend | `http://localhost:8000` |
 | `STRIPE_SECRET_KEY` | Stripe secret key (`sk_test_` or `sk_live_`) | — |
 | `STRIPE_WEBHOOK_SECRET` | Stripe webhook signing secret (`whsec_`) | — |
-| `FRONTEND_URL` | Frontend URL for Stripe redirects | `http://localhost:4321` |
 
 ## Getting a Google Maps API Key
 
@@ -266,6 +290,7 @@ lead-extractor/
 - **Frontend**: Astro 5, React 18, Tailwind CSS
 - **Auth**: JWT, magic links, bcrypt passwords
 - **Payments**: Stripe Checkout (inline pricing)
+- **Email**: Resend (free tier, with console mock fallback)
 - **i18n**: i18next (EN, ES, FR)
 - **Deployment**: Docker, nginx
 

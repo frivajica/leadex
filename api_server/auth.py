@@ -2,9 +2,6 @@ import secrets
 import os
 from datetime import datetime, timedelta
 from typing import Optional
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-import smtplib
 from jose import jwt
 from passlib.hash import bcrypt
 from fastapi import Request
@@ -17,55 +14,48 @@ from api_server.database import (
     use_magic_link,
     update_user_password,
 )
+from api_server.email_provider import send_email
 
 SECRET_KEY = os.getenv("SECRET_KEY", secrets.token_hex(32))
 ALGORITHM = "HS256"
 TOKEN_EXPIRY_HOURS = 24
 
-SMTP_HOST = os.getenv("SMTP_HOST", "")
-SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
-SMTP_USER = os.getenv("SMTP_USER", "")
-SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
-FROM_EMAIL = os.getenv("FROM_EMAIL", "noreply@leadextractor.app")
-
-APP_URL = os.getenv("APP_URL", "http://localhost:4321")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:4321")
 
 
 def send_magic_link_email(email: str, magic_link: str) -> bool:
-    """Send magic link email (or mock for development)."""
-    if not SMTP_HOST or not SMTP_USER:
-        # Mock mode - just print the link
-        print(f"\n[MOCK EMAIL] Magic link for {email}:")
-        print(f"  {magic_link}\n")
-        return True
+    """Send magic link email via the configured email provider."""
+    subject = "Sign in to Lead Extractor"
 
-    try:
-        msg = MIMEMultipart()
-        msg["From"] = FROM_EMAIL
-        msg["To"] = email
-        msg["Subject"] = "Sign in to Lead Extractor"
+    text = (
+        f"Hello,\n\n"
+        f"Click the link below to sign in to Lead Extractor:\n\n"
+        f"{magic_link}\n\n"
+        f"This link will expire in {TOKEN_EXPIRY_HOURS} hours.\n\n"
+        f"If you didn't request this, please ignore this email."
+    )
 
-        body = f"""Hello,
+    html = f"""
+    <div style="font-family: 'Inter', -apple-system, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px;">
+      <h2 style="color: #1f2937; margin-bottom: 16px;">Sign in to Lead Extractor</h2>
+      <p style="color: #4b5563; line-height: 1.6;">Click the button below to securely sign in to your account:</p>
+      <div style="text-align: center; margin: 32px 0;">
+        <a href="{magic_link}"
+           style="display: inline-block; padding: 14px 32px; background: #7c3aed; color: #ffffff;
+                  text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 16px;">
+          Sign In
+        </a>
+      </div>
+      <p style="color: #9ca3af; font-size: 13px; line-height: 1.5;">
+        This link will expire in {TOKEN_EXPIRY_HOURS} hours.<br>
+        If you didn't request this, please ignore this email.
+      </p>
+      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;">
+      <p style="color: #d1d5db; font-size: 12px;">Lead Extractor</p>
+    </div>
+    """
 
-Click the link below to sign in to Lead Extractor:
-
-{magic_link}
-
-This link will expire in {TOKEN_EXPIRY_HOURS} hours.
-
-If you didn't request this, please ignore this email.
-"""
-        msg.attach(MIMEText(body, "plain"))
-
-        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
-            server.starttls()
-            server.login(SMTP_USER, SMTP_PASSWORD)
-            server.send_message(msg)
-
-        return True
-    except Exception as e:
-        print(f"Error sending email: {e}")
-        return False
+    return send_email(email, subject, html, text)
 
 
 def register_user(email: str, redirect_url: Optional[str] = None) -> tuple[bool, str]:
@@ -83,7 +73,7 @@ def register_user(email: str, redirect_url: Optional[str] = None) -> tuple[bool,
 
     create_magic_link(user_id, token, expires_at)
 
-    magic_link = f"{APP_URL}/auth/verify?token={token}"
+    magic_link = f"{FRONTEND_URL}/auth/verify?token={token}"
     if redirect_url:
         import urllib.parse
         magic_link += f"&redirect={urllib.parse.quote(redirect_url)}"
