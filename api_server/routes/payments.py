@@ -105,18 +105,25 @@ async def create_checkout_session(request: Request, data: Dict[str, Any], user=D
 @router.post("/api/payments/webhook")
 async def stripe_webhook(request: Request):
     """Handle Stripe Webhooks for payment fulfillment."""
+    print("Received Stripe Webhook request")
     payload = await request.body()
     sig_header = request.headers.get("stripe-signature")
+
+    if not sig_header:
+        print("Error: Missing stripe-signature header")
+        raise HTTPException(status_code=400, detail="Missing signature")
 
     try:
         event = stripe.Webhook.construct_event(
             payload, sig_header, STRIPE_WEBHOOK_SECRET
         )
+        print(f"Webhook event received and verified: {event['type']}")
     except ValueError as e:
-        # Invalid payload
+        print(f"Webhook Error (Invalid payload): {str(e)}")
         raise HTTPException(status_code=400, detail="Invalid payload")
     except stripe.error.SignatureVerificationError as e:
-        # Invalid signature
+        print(f"Webhook Error (Invalid signature): {str(e)}")
+        print(f"Provided Secret: {STRIPE_WEBHOOK_SECRET[:10]}...")
         raise HTTPException(status_code=400, detail="Invalid signature")
 
     # Handle the checkout.session.completed event
@@ -125,13 +132,21 @@ async def stripe_webhook(request: Request):
         
         # Fulfill the purchase...
         client_reference_id = session.get('client_reference_id')
+        print(f"Processing checkout.session.completed. Client Reference ID: {client_reference_id}")
+        
         if client_reference_id:
-            user_id_str, tier = client_reference_id.split('_')
-            user_id = int(user_id_str)
-            
-            print(f"Fulfilling payment for User {user_id}, Tier: {tier}")
-            from ..database import update_user_subscription
-            update_user_subscription(user_id, tier)
+            try:
+                user_id_str, tier = client_reference_id.split('_')
+                user_id = int(user_id_str)
+                
+                print(f"Fulfilling payment for User {user_id}, Tier: {tier}")
+                from ..database import update_user_subscription
+                success = update_user_subscription(user_id, tier)
+                print(f"Database update success: {success}")
+            except Exception as e:
+                print(f"Error in fulfillment logic: {str(e)}")
+        else:
+            print("Warning: No client_reference_id found in session")
 
     return {"status": "success"}
 

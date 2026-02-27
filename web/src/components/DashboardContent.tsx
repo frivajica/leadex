@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { jobsApi, keysApi, type Job } from '../lib/api';
+import { jobsApi, keysApi, authApi, type Job, type User } from '../lib/api';
 import { useTranslation } from 'react-i18next';
 import '../lib/i18n';
 
@@ -13,6 +13,7 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [hasApiKey, setHasApiKey] = useState<boolean | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -22,13 +23,19 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
 
   const loadJobs = async () => {
     try {
-      const [jobsData, keysData] = await Promise.all([
+      const [jobsData, keysData, userData] = await Promise.all([
         jobsApi.list(10, 0),
-        keysApi.list()
+        keysApi.list(),
+        authApi.me()
       ]);
       setJobs(jobsData.jobs);
       setHasApiKey(keysData.keys.length > 0);
+      setUser(userData);
+      console.log('[Dashboard] User data loaded:', userData);
+      console.log('[Dashboard] Managed plan?', userData.subscription_tier !== 'free');
+      console.log('[Dashboard] Credits?', userData.job_credits);
     } catch (err) {
+      console.error('[Dashboard] Failed to load data:', err);
       setError(err instanceof Error ? err.message : t('auth.error_generic'));
     } finally {
       setLoading(false);
@@ -83,7 +90,17 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
     }
   };
 
-  if (!ready || !mounted || loading) {
+  if (!mounted) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-200 border-t-primary-600 mx-auto mb-4"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!ready || loading) {
     return (
       <div className="flex items-center justify-center py-20">
         <div className="text-center">
@@ -120,7 +137,7 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
       </div>
 
       {/* Account Status Widget */}
-      {hasApiKey !== null && (
+      {hasApiKey !== null && user !== null && (
         <div className="mb-8">
           {hasApiKey ? (
             <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start gap-3 shadow-sm">
@@ -133,6 +150,22 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
                 <h3 className="text-sm font-medium text-green-800">Free Tier Active</h3>
                 <p className="text-sm text-green-700 mt-1">
                   You are using your personal Google Places API key. All lead extractions are free!
+                </p>
+              </div>
+            </div>
+          ) : user.subscription_tier !== 'free' || user.job_credits > 0 ? (
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3 shadow-sm">
+              <div className="flex-shrink-0 mt-0.5">
+                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-blue-800">Managed Plan Active</h3>
+                <p className="text-sm text-blue-700 mt-1">
+                  {user.subscription_tier === 'single'
+                    ? `You have ${user.job_credits} job credits available.`
+                    : `You have unlimited access until ${new Date(user.subscription_expires_at!).toLocaleDateString()}.`}
                 </p>
               </div>
             </div>

@@ -5,8 +5,10 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
+# Load environment variables
+load_dotenv()  # From CWD
+# Also look in root directory if we are inside api_server/
+load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
 from api_server.database import init_db
 from api_server.auth import register_user, verify_magic_link, create_access_token, get_current_user, register_with_password, login_with_password
