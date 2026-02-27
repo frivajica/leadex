@@ -743,7 +743,7 @@ DEFAULT_USE_QUALITY_FILTERS = False  # Show all businesses, just add compliance 
 # =============================================================================
 DEFAULT_MIN_RATING = 4.0      # Minimum Google rating (0-5)
 DEFAULT_MIN_REVIEWS = 10      # Minimum number of reviews
-DEFAULT_MIN_PHOTOS = 3        # Minimum number of photos
+DEFAULT_MIN_PHOTOS = 5        # Minimum number of photos
 
 # =============================================================================
 # Lead Scoring - Base Thresholds

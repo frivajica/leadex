@@ -4,7 +4,7 @@ from typing import List, Dict
 from lib.config import (
     DEFAULT_MIN_RATING,
     DEFAULT_MIN_REVIEWS,
-    DEFAULT_MIN_PHOTOS,
+    DEFAULT_MIN_PHOTOS, # This line is kept as is, as the value is defined in lib.config
     SCORE_RATING_THRESHOLDS,
     SCORE_REVIEW_THRESHOLDS,
     SCORE_PHOTO_THRESHOLDS,
@@ -33,13 +33,16 @@ def filter_businesses_without_websites(businesses: List[dict]) -> List[dict]:
 
 def filter_by_criteria(
     businesses: List[dict],
-    min_rating: float = DEFAULT_MIN_RATING,
-    min_reviews: int = DEFAULT_MIN_REVIEWS,
-    min_photos: int = DEFAULT_MIN_PHOTOS,
+    require_no_website: bool = False,
+    require_no_social: bool = False,
+    require_phone: bool = False,
+    require_address: bool = False,
+    min_rating: float = None,
+    min_reviews: int = None,
+    min_photos: int = None,
 ) -> List[dict]:
     """
-    Filter businesses by optional quality criteria.
-    These filters are applied after removing businesses with websites.
+    Filter businesses by user-defined criteria.
     """
     filtered = []
     for b in businesses:
@@ -47,11 +50,26 @@ def filter_by_criteria(
         reviews = b.get("review_count", 0)
         photos = b.get("photos_count", 0)
 
-        if (
-            rating >= min_rating
-            and reviews >= min_reviews
-            and photos >= min_photos
-        ):
+        
+        passes = True
+        
+        if require_no_website and b.get("website"):
+            passes = False
+        if require_no_social and b.get("social"):
+            passes = False
+        if require_phone and not b.get("has_phone"):
+            passes = False
+        if require_address and not b.get("address"):
+            passes = False
+            
+        if min_rating is not None and rating < min_rating:
+            passes = False
+        if min_reviews is not None and reviews < min_reviews:
+            passes = False
+        if min_photos is not None and photos < min_photos:
+            passes = False
+
+        if passes:
             filtered.append(b)
 
     return filtered
@@ -201,10 +219,13 @@ def sort_by_score(businesses: List[dict], descending: bool = True) -> List[dict]
 
 def apply_all_filters(
     businesses: List[dict],
-    use_quality_filters: bool = DEFAULT_USE_QUALITY_FILTERS,
-    min_rating: float = DEFAULT_MIN_RATING,
-    min_reviews: int = DEFAULT_MIN_REVIEWS,
-    min_photos: int = DEFAULT_MIN_PHOTOS,
+    require_no_website: bool = False,
+    require_no_social: bool = False,
+    require_phone: bool = False,
+    require_address: bool = False,
+    min_rating: float = None,
+    min_reviews: int = None,
+    min_photos: int = None,
     sort_by: str = "distance",
     center_lat: float = None,
     center_lng: float = None,
@@ -214,7 +235,10 @@ def apply_all_filters(
 
     Args:
         businesses: List of business dictionaries
-        use_quality_filters: Whether to apply quality filters
+        require_no_website: Discard users with websites
+        require_no_social: Discard users with social profiles
+        require_phone: Require phone number
+        require_address: Require address
         min_rating: Minimum rating threshold
         min_reviews: Minimum reviews threshold
         min_photos: Minimum photos threshold
@@ -226,25 +250,25 @@ def apply_all_filters(
     if center_lat is not None and center_lng is not None:
         businesses = add_distances(businesses, center_lat, center_lng)
 
-    # Step 1: Filter businesses without websites
-    leads = filter_businesses_without_websites(businesses)
-
-    # Step 2: Optionally apply quality filters
-    if use_quality_filters:
-        leads = filter_by_criteria(
-            leads,
-            min_rating=min_rating,
-            min_reviews=min_reviews,
-            min_photos=min_photos,
-        )
+    # Step 1: Apply explicitly requested filters
+    leads = filter_by_criteria(
+        businesses,
+        require_no_website=require_no_website,
+        require_no_social=require_no_social,
+        require_phone=require_phone,
+        require_address=require_address,
+        min_rating=min_rating,
+        min_reviews=min_reviews,
+        min_photos=min_photos,
+    )
 
     # Step 3: Add compliance info and scores (always - don't filter, just flag)
     for lead in leads:
         compliance = check_quality_compliance(
             lead,
-            min_rating=min_rating,
-            min_reviews=min_reviews,
-            min_photos=min_photos,
+            min_rating=DEFAULT_MIN_RATING,
+            min_reviews=DEFAULT_MIN_REVIEWS,
+            min_photos=DEFAULT_MIN_PHOTOS,
         )
         lead["meets_rating"] = compliance["meets_rating"]
         lead["meets_reviews"] = compliance["meets_reviews"]

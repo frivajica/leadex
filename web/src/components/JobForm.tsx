@@ -33,11 +33,19 @@ export default function JobForm() {
   const [radius, setRadius] = useState(5000);
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<'score' | 'distance'>('score');
-  const [useFilters, setUseFilters] = useState(false);
-  const [minRating, setMinRating] = useState(4.0);
-  const [minReviews, setMinReviews] = useState(10);
-  const [minPhotos, setMinPhotos] = useState(3);
+  const [requireNoWebsite, setRequireNoWebsite] = useState(false);
+  const [requireNoSocial, setRequireNoSocial] = useState(false);
+  const [requirePhone, setRequirePhone] = useState(false);
+  const [requireAddress, setRequireAddress] = useState(false);
 
+  const [useMinRating, setUseMinRating] = useState(true);
+  const [minRating, setMinRating] = useState(4.0);
+
+  const [useMinReviews, setUseMinReviews] = useState(true);
+  const [minReviews, setMinReviews] = useState(10);
+
+  const [useMinPhotos, setUseMinPhotos] = useState(true);
+  const [minPhotos, setMinPhotos] = useState(5);
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
@@ -62,6 +70,16 @@ export default function JobForm() {
       errorRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }, [error]);
+
+  const activeFiltersCount = [
+    requireNoWebsite,
+    requireNoSocial,
+    requirePhone,
+    requireAddress,
+    useMinRating,
+    useMinReviews,
+    useMinPhotos
+  ].filter(Boolean).length;
 
   // Validation
   const isValid = name.trim() !== '' && lat !== '' && lng !== '' && selectedGroups.length > 0;
@@ -140,10 +158,13 @@ export default function JobForm() {
         center_address: address,
         categories: categories.length > 0 ? categories : undefined,
         radius,
-        min_rating: useFilters ? minRating : 0,
-        min_reviews: useFilters ? minReviews : 0,
-        min_photos: useFilters ? minPhotos : 0,
-        use_quality_filters: useFilters,
+        require_no_website: requireNoWebsite,
+        require_no_social: requireNoSocial,
+        require_phone: requirePhone,
+        require_address: requireAddress,
+        min_rating: useMinRating ? minRating : undefined,
+        min_reviews: useMinReviews ? minReviews : undefined,
+        min_photos: useMinPhotos ? minPhotos : undefined,
         sort_by: sortBy,
       });
 
@@ -239,8 +260,8 @@ export default function JobForm() {
             type="button"
             onClick={() => setLocationMode(LocationMode.Detect)}
             className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${locationMode === LocationMode.Detect
-                ? 'bg-white text-primary-700 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
+              ? 'bg-white text-primary-700 shadow-sm'
+              : 'text-gray-500 hover:text-gray-700'
               }`}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -253,8 +274,8 @@ export default function JobForm() {
             type="button"
             onClick={() => setLocationMode(LocationMode.Manual)}
             className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${locationMode === LocationMode.Manual
-                ? 'bg-white text-primary-700 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
+              ? 'bg-white text-primary-700 shadow-sm'
+              : 'text-gray-500 hover:text-gray-700'
               }`}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -397,8 +418,8 @@ export default function JobForm() {
                   type="button"
                   onClick={() => toggleGroup(group.id)}
                   className={`flex flex-col items-center justify-center gap-1.5 p-4 rounded-xl border-2 transition-all text-center ${isSelected
-                      ? 'border-primary-500 bg-primary-50 shadow-sm'
-                      : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                    ? 'border-primary-500 bg-primary-50 shadow-sm'
+                    : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
                     }`}
                 >
                   <span className="text-2xl">{group.icon}</span>
@@ -433,14 +454,21 @@ export default function JobForm() {
           className="flex items-center justify-between w-full"
         >
           <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${useFilters ? 'bg-primary-100' : 'bg-gray-100'}`}>
-              <svg className={`w-5 h-5 ${useFilters ? 'text-primary-600' : 'text-gray-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${showFilters ? 'bg-primary-100' : 'bg-gray-100'}`}>
+              <svg className={`w-5 h-5 ${showFilters ? 'text-primary-600' : 'text-gray-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
               </svg>
             </div>
-            <div className="text-left">
-              <span className="block text-sm font-medium text-gray-900">{t('jobs.form.quality_filters')}</span>
-              <span className="block text-xs text-gray-500">{t('jobs.form.quality_filters_desc')}</span>
+            <div className="text-left flex items-center gap-2">
+              <div>
+                <span className="block text-sm font-medium text-gray-900">{t('jobs.form.quality_filters')}</span>
+                <span className="block text-xs text-gray-500">{t('jobs.form.quality_filters_desc')}</span>
+              </div>
+              {activeFiltersCount > 0 && (
+                <span className="inline-flex items-center justify-center px-2 py-0.5 ml-2 text-xs font-medium text-primary-700 bg-primary-100 rounded-full">
+                  {activeFiltersCount}
+                </span>
+              )}
             </div>
           </div>
           <svg className={`w-5 h-5 text-gray-400 transform transition-transform ${showFilters ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -448,51 +476,145 @@ export default function JobForm() {
           </svg>
         </button>
 
-        <div className="mt-4">
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={useFilters}
-              onChange={(e) => setUseFilters(e.target.checked)}
-              className="rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4"
-            />
-            <span className="ml-2 text-sm text-gray-600">{t('jobs.form.apply_quality_filters')}</span>
-          </label>
-        </div>
-
         {showFilters && (
-          <div className="mt-4 grid grid-cols-3 gap-4">
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">{t('jobs.form.min_rating')}</label>
+          <div className="mt-4 space-y-4">
+            {/* Website */}
+            <label className="flex items-start cursor-pointer">
               <input
-                type="number"
-                step="0.1"
-                min="0"
-                max="5"
-                value={minRating}
-                onChange={(e) => setMinRating(Number(e.target.value))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                type="checkbox"
+                checked={requireNoWebsite}
+                onChange={(e) => setRequireNoWebsite(e.target.checked)}
+                className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
               />
+              <div className="ml-3">
+                <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.no_website')}</span>
+                <span className="block text-xs text-gray-500">{t('jobs.form.filters.no_website_desc')}</span>
+              </div>
+            </label>
+
+            {/* Social */}
+            <label className="flex items-start cursor-pointer">
+              <input
+                type="checkbox"
+                checked={requireNoSocial}
+                onChange={(e) => setRequireNoSocial(e.target.checked)}
+                className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
+              />
+              <div className="ml-3">
+                <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.no_social')}</span>
+                <span className="block text-xs text-gray-500">{t('jobs.form.filters.no_social_desc')}</span>
+              </div>
+            </label>
+
+            {/* Phone */}
+            <label className="flex items-start cursor-pointer">
+              <input
+                type="checkbox"
+                checked={requirePhone}
+                onChange={(e) => setRequirePhone(e.target.checked)}
+                className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
+              />
+              <div className="ml-3">
+                <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.require_phone')}</span>
+                <span className="block text-xs text-gray-500">{t('jobs.form.filters.require_phone_desc')}</span>
+              </div>
+            </label>
+
+            {/* Address */}
+            <label className="flex items-start cursor-pointer">
+              <input
+                type="checkbox"
+                checked={requireAddress}
+                onChange={(e) => setRequireAddress(e.target.checked)}
+                className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
+              />
+              <div className="ml-3">
+                <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.require_address')}</span>
+                <span className="block text-xs text-gray-500">{t('jobs.form.filters.require_address_desc')}</span>
+              </div>
+            </label>
+
+            {/* Rating */}
+            <div className="pt-3 border-t border-gray-100">
+              <label className="flex items-start cursor-pointer mb-2">
+                <input
+                  type="checkbox"
+                  checked={useMinRating}
+                  onChange={(e) => setUseMinRating(e.target.checked)}
+                  className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
+                />
+                <div className="ml-3">
+                  <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.min_rating')}</span>
+                  <span className="block text-xs text-gray-500">{t('jobs.form.filters.min_rating_desc')}</span>
+                </div>
+              </label>
+              {useMinRating && (
+                <div className="ml-7 mt-2">
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="5"
+                    value={minRating}
+                    onChange={(e) => setMinRating(Number(e.target.value))}
+                    className="w-full max-w-[120px] px-3 py-2 border border-gray-300 rounded-lg text-sm transition-all"
+                  />
+                </div>
+              )}
             </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">{t('jobs.form.min_reviews')}</label>
-              <input
-                type="number"
-                min="0"
-                value={minReviews}
-                onChange={(e) => setMinReviews(Number(e.target.value))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-              />
+
+            {/* Reviews */}
+            <div className="pt-3 border-t border-gray-100">
+              <label className="flex items-start cursor-pointer mb-2">
+                <input
+                  type="checkbox"
+                  checked={useMinReviews}
+                  onChange={(e) => setUseMinReviews(e.target.checked)}
+                  className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
+                />
+                <div className="ml-3">
+                  <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.min_reviews')}</span>
+                  <span className="block text-xs text-gray-500">{t('jobs.form.filters.min_reviews_desc')}</span>
+                </div>
+              </label>
+              {useMinReviews && (
+                <div className="ml-7 mt-2">
+                  <input
+                    type="number"
+                    min="0"
+                    value={minReviews}
+                    onChange={(e) => setMinReviews(Number(e.target.value))}
+                    className="w-full max-w-[120px] px-3 py-2 border border-gray-300 rounded-lg text-sm transition-all"
+                  />
+                </div>
+              )}
             </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">{t('jobs.form.min_photos')}</label>
-              <input
-                type="number"
-                min="0"
-                value={minPhotos}
-                onChange={(e) => setMinPhotos(Number(e.target.value))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-              />
+
+            {/* Photos */}
+            <div className="pt-3 border-t border-gray-100">
+              <label className="flex items-start cursor-pointer mb-2">
+                <input
+                  type="checkbox"
+                  checked={useMinPhotos}
+                  onChange={(e) => setUseMinPhotos(e.target.checked)}
+                  className="mt-1 rounded border-gray-300 text-primary-600 focus:ring-primary-500 w-4 h-4 shrink-0"
+                />
+                <div className="ml-3">
+                  <span className="block text-sm font-medium text-gray-700">{t('jobs.form.filters.min_photos')}</span>
+                  <span className="block text-xs text-gray-500">{t('jobs.form.filters.min_photos_desc')}</span>
+                </div>
+              </label>
+              {useMinPhotos && (
+                <div className="ml-7 mt-2">
+                  <input
+                    type="number"
+                    min="0"
+                    value={minPhotos}
+                    onChange={(e) => setMinPhotos(Number(e.target.value))}
+                    className="w-full max-w-[120px] px-3 py-2 border border-gray-300 rounded-lg text-sm transition-all"
+                  />
+                </div>
+              )}
             </div>
           </div>
         )}

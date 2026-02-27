@@ -106,11 +106,14 @@ class LeadExtractorService:
             # Apply filters
             leads = apply_all_filters(
                 businesses,
-                use_quality_filters=bool(job["use_quality_filters"]),
-                min_rating=job["min_rating"],
-                min_reviews=job["min_reviews"],
-                min_photos=job["min_photos"],
-                sort_by=job["sort_by"],
+                require_no_website=bool(job.get("require_no_website")),
+                require_no_social=bool(job.get("require_no_social")),
+                require_phone=bool(job.get("require_phone")),
+                require_address=bool(job.get("require_address")),
+                min_rating=job.get("min_rating"),
+                min_reviews=job.get("min_reviews"),
+                min_photos=job.get("min_photos"),
+                sort_by=job.get("sort_by", "score"),
                 center_lat=job["center_lat"],
                 center_lng=job["center_lng"],
             )

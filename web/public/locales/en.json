@@ -105,7 +105,24 @@
 			"error_api_key_desc": "You need a Google Maps API key. Please add one in Settings.",
 			"success_title": "Job Created!",
 			"success_desc": "Redirecting to job details...",
-			"required": "Required"
+			"required": "Required",
+			"process_choice": "How would you like to process this job?",
+			"filters": {
+				"no_website": "Only businesses WITHOUT a website",
+				"no_website_desc": "Discard businesses that already have a dedicated website linked to their Google Profile.",
+				"no_social": "Only businesses WITHOUT a social profile",
+				"no_social_desc": "Discard businesses that link to a social media page (Facebook, Instagram) instead of a website.",
+				"require_phone": "Require Phone Number",
+				"require_phone_desc": "Discard businesses that do not have a public phone number.",
+				"require_address": "Require Physical Address",
+				"require_address_desc": "Discard businesses that do not have a listed physical location.",
+				"min_rating": "Minimum Google Rating",
+				"min_rating_desc": "Discard businesses with a rating lower than your specified value (0.0 to 5.0).",
+				"min_reviews": "Minimum Reviews",
+				"min_reviews_desc": "Discard businesses with fewer reviews than your specified value.",
+				"min_photos": "Minimum Photos",
+				"min_photos_desc": "Discard businesses with fewer photos than your specified value."
+			}
 		},
 		"status": {
 			"completed": "completed",

@@ -130,10 +130,13 @@ export const jobsApi = {
     center_address?: string;
     categories?: string[];
     radius?: number;
+    require_no_website?: boolean;
+    require_no_social?: boolean;
+    require_phone?: boolean;
+    require_address?: boolean;
     min_rating?: number;
     min_reviews?: number;
     min_photos?: number;
-    use_quality_filters?: boolean;
     sort_by?: string;
   }) =>
     fetchApi<{ id: number; name: string; status: string; message: string }>(

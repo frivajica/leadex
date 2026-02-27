@@ -29,10 +29,13 @@ class CreateJobRequest(BaseModel):
     center_address: Optional[str] = None
     categories: Optional[List[str]] = None
     radius: int = 5000
-    min_rating: float = 4.0
-    min_reviews: int = 10
-    min_photos: int = 3
-    use_quality_filters: bool = False
+    require_no_website: bool = False
+    require_no_social: bool = False
+    require_phone: bool = False
+    require_address: bool = False
+    min_rating: Optional[float] = None
+    min_reviews: Optional[int] = None
+    min_photos: Optional[int] = None
     sort_by: str = "score"
 
 
@@ -75,10 +78,13 @@ async def create_new_job(
         center_address=request.center_address,
         categories=request.categories,
         radius=request.radius,
+        require_no_website=request.require_no_website,
+        require_no_social=request.require_no_social,
+        require_phone=request.require_phone,
+        require_address=request.require_address,
         min_rating=request.min_rating,
         min_reviews=request.min_reviews,
         min_photos=request.min_photos,
-        use_quality_filters=request.use_quality_filters,
         sort_by=request.sort_by,
     )
 

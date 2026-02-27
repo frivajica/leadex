@@ -102,6 +102,14 @@ def init_db():
             )
         """)
 
+        # Add new columns if they don't exist (basic migration)
+        import sqlite3
+        for col in ["require_no_website", "require_no_social", "require_phone", "require_address"]:
+            try:
+                cursor.execute(f"ALTER TABLE jobs ADD COLUMN {col} INTEGER DEFAULT 0")
+            except sqlite3.OperationalError:
+                pass # Column already exists
+
         # Results table
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS results (
@@ -252,10 +260,13 @@ def create_job(
     center_address: str = None,
     categories: List[str] = None,
     radius: int = 5000,
-    min_rating: float = 4.0,
-    min_reviews: int = 10,
-    min_photos: int = 3,
-    use_quality_filters: bool = False,
+    require_no_website: bool = False,
+    require_no_social: bool = False,
+    require_phone: bool = False,
+    require_address: bool = False,
+    min_rating: float = None,
+    min_reviews: int = None,
+    min_photos: int = None,
     sort_by: str = "score",
 ) -> int:
     """Create a new job."""
@@ -266,13 +277,19 @@ def create_job(
         cursor.execute(
             """INSERT INTO jobs (
                 user_id, name, center_lat, center_lng, center_address,
-                categories, radius, min_rating, min_reviews, min_photos,
-                use_quality_filters, sort_by, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                categories, radius, require_no_website, require_no_social,
+                require_phone, require_address, min_rating, min_reviews, min_photos,
+                sort_by, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 user_id, name, center_lat, center_lng, center_address,
-                categories_json, radius, min_rating, min_reviews, min_photos,
-                1 if use_quality_filters else 0, sort_by, now, now
+                categories_json, radius,
+                1 if require_no_website else 0,
+                1 if require_no_social else 0,
+                1 if require_phone else 0,
+                1 if require_address else 0,
+                min_rating, min_reviews, min_photos,
+                sort_by, now, now
             )
         )
         return cursor.lastrowid
