@@ -2,11 +2,14 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/landing/Header.astro';
 import Footer from '../components/landing/Footer.astro';
+import { getT, getLangFromCookies } from '../lib/i18n-astro';
 
+const locale = getLangFromCookies(Astro.cookies);
+const t = getT(locale);
 const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
 ---
 
-<Layout title="Pricing & Plans - Lead Extractor">
+<Layout title={t('landing.pricing_title')}>
   <div class="min-h-screen flex flex-col">
     <Header />
 
@@ -14,85 +17,85 @@ const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
       <section id="pricing" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-i18n="landing.pricing_title">Simple, Flexible Pricing</h2>
-            <p class="text-lg text-gray-600 max-w-xl mx-auto" data-i18n="landing.pricing_subtitle">Choose the model that works best for your needs.</p>
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{t('landing.pricing_title')}</h2>
+            <p class="text-lg text-gray-600 max-w-xl mx-auto">{t('landing.pricing_subtitle')}</p>
           </div>
 
           <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             <!-- Free / BYOK Tier -->
             <div class="p-8 rounded-2xl bg-gray-50 border border-gray-200 shadow-sm flex flex-col items-center text-center">
-              <h3 class="text-2xl font-bold text-gray-900 mb-2" data-i18n="landing.pricing_byok">Self-Hosted / BYOK</h3>
-              <p class="text-gray-500 mb-6 font-medium" data-i18n="landing.pricing_byok_subtitle">Bring Your Own Key</p>
-              <div class="text-4xl font-extrabold text-primary-600 mb-6">$0<span class="text-lg text-gray-500 font-medium">/mo</span></div>
+              <h3 class="text-2xl font-bold text-gray-900 mb-2">{t('landing.pricing_byok')}</h3>
+              <p class="text-gray-500 mb-6 font-medium">{t('landing.pricing_byok_subtitle')}</p>
+              <div class="text-4xl font-extrabold text-primary-600 mb-6">$0<span class="text-lg text-gray-500 font-medium">{t('landing.pricing_mo', '/mo')}</span></div>
               
               <ul class="text-left w-full space-y-4 mb-8">
-                <li class="flex items-start text-gray-700">
+                 <li class="flex items-start text-gray-700">
                   <svg class="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span data-i18n="landing.pricing_unlimited_jobs">Unlimited Extraction Jobs</span>
+                  <span>{t('landing.pricing_unlimited_jobs')}</span>
                 </li>
                 <li class="flex items-start text-gray-700">
                   <svg class="h-6 w-6 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span data-i18n="landing.pricing_own_billing">Use your own Google Cloud Billing</span>
+                  <span>{t('landing.pricing_own_billing')}</span>
                 </li>
-                <li class="flex items-start text-gray-500 text-sm mt-1 ml-8" data-i18n="landing.pricing_google_credit">
-                  (Google provides $200 free credit monthly)
+                <li class="flex items-start text-gray-500 text-sm mt-1 ml-8">
+                  {t('landing.pricing_google_credit')}
                 </li>
               </ul>
               
               {isLoggedIn ? (
                 <a href="/dashboard" class="w-full py-4 px-6 bg-white border-2 border-primary-600 text-primary-700 rounded-xl font-bold hover:bg-primary-50 transition-colors mt-auto">
-                  <span data-i18n="common.go_to_dashboard">Go to Dashboard</span>
+                  <span>{t('common.go_to_dashboard')}</span>
                 </a>
               ) : (
                 <a href="/register" class="w-full py-4 px-6 bg-white border-2 border-primary-600 text-primary-700 rounded-xl font-bold hover:bg-primary-50 transition-colors mt-auto">
-                  <span data-i18n="landing.pricing_start_free">Start For Free</span>
+                  <span>{t('landing.pricing_start_free')}</span>
                 </a>
               )}
             </div>
 
             <!-- Managed / Paid Tier -->
             <div class="p-8 rounded-2xl bg-gradient-to-b from-primary-900 to-primary-800 text-white shadow-xl flex flex-col items-center text-center relative overflow-hidden">
-                <div class="absolute top-0 right-0 bg-primary-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider" data-i18n="landing.pricing_turnkey">
-                Turnkey
+                <div class="absolute top-0 right-0 bg-primary-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider">
+                {t('landing.pricing_turnkey')}
               </div>
-              <h3 class="text-2xl font-bold mb-2" data-i18n="landing.pricing_managed">Managed Service</h3>
-              <p class="text-primary-200 mb-6 font-medium" data-i18n="landing.pricing_managed_subtitle">We handle everything</p>
+              <h3 class="text-2xl font-bold mb-2">{t('landing.pricing_managed')}</h3>
+              <p class="text-primary-200 mb-6 font-medium">{t('landing.pricing_managed_subtitle')}</p>
               <div class="text-4xl font-extrabold text-white mb-6">
-                <span data-i18n="landing.pricing_managed_starts">Starts at $4</span><span class="text-lg text-primary-300 font-medium">/job</span>
+                <span>{t('landing.pricing_managed_starts')}</span><span class="text-lg text-primary-300 font-medium">{t('landing.pricing_per_job', '/job')}</span>
               </div>
               
               <ul class="text-left w-full space-y-4 mb-8">
-                <li class="flex items-start text-primary-50">
+                 <li class="flex items-start text-primary-50">
                   <svg class="h-6 w-6 text-primary-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span data-i18n="landing.pricing_zero_setup">Zero setup required</span>
+                  <span>{t('landing.pricing_zero_setup')}</span>
                 </li>
                  <li class="flex items-start text-primary-50">
                   <svg class="h-6 w-6 text-primary-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span data-i18n="landing.pricing_api_limits">We handle Google API limits</span>
+                  <span>{t('landing.pricing_api_limits')}</span>
                 </li>
                 <li class="flex items-start text-primary-50 mt-1">
                    <svg class="h-6 w-6 text-primary-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span data-i18n="landing.pricing_subscriptions">Flexible Subscriptions Available ($10/wk)</span>
+                  <span>{t('landing.pricing_subscriptions')}</span>
                 </li>
               </ul>
               
               {isLoggedIn ? (
                 <a href="/checkout" class="w-full py-4 px-6 bg-white text-primary-900 rounded-xl font-bold hover:bg-primary-50 transition-colors shadow-lg mt-auto">
-                  <span data-i18n="landing.get_started">Get Started</span>
+                  <span>{t('landing.get_started')}</span>
                 </a>
               ) : (
                 <a href="/checkout" class="w-full py-4 px-6 bg-white text-primary-900 rounded-xl font-bold hover:bg-primary-50 transition-colors shadow-lg mt-auto">
-                  <span data-i18n="landing.pricing_view_plans">View Managed Plans</span>
+                  <span>{t('landing.pricing_view_plans')}</span>
                 </a>
               )}
             </div>

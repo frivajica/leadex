@@ -1,12 +1,16 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { getT, getLangFromCookies } from '../lib/i18n-astro';
+
+const locale = getLangFromCookies(Astro.cookies);
+const t = getT(locale);
 ---
 
-<Layout title="Page Not Found - Lead Extractor">
+<Layout title={`${t('auth.redirect_dashboard', 'Redirecting...')} - Lead Extractor`}>
   <div class="min-h-screen bg-gray-50 flex items-center justify-center">
     <div class="text-center">
       <div class="animate-spin rounded-full h-10 w-10 border-4 border-primary-200 border-t-primary-600 mx-auto mb-4"></div>
-      <p class="text-gray-500 text-sm" data-i18n="auth.redirect_dashboard">Redirecting...</p>
+      <p class="text-gray-500 text-sm">{t('auth.redirect_dashboard')}</p>
     </div>
   </div>
 

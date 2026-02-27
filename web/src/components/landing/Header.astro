@@ -1,11 +1,9 @@
 ---
 import LanguageSwitcher from '../LanguageSwitcher';
+import { getT, getLangFromCookies } from '../../lib/i18n-astro';
 
-const cookieLang = Astro.cookies.get('i18next')?.value;
-const headerLang = Astro.request.headers.get('accept-language')?.split(',')[0].split('-')[0];
-const supported = ['en', 'es', 'fr'];
-const currentLocale = cookieLang || (supported.includes(headerLang || '') ? headerLang : 'en');
-
+const currentLocale = getLangFromCookies(Astro.cookies);
+const t = getT(currentLocale);
 const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
 ---
 
@@ -23,8 +21,8 @@ const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
         </a>
         
         <div class="hidden sm:flex items-center gap-4">
-          <a href="/pricing" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-i18n="nav.pricing">
-            Pricing
+          <a href="/pricing" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+            {t('nav.pricing')}
           </a>
         </div>
       </div>
@@ -36,21 +34,21 @@ const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
             <a
               href="/dashboard"
               class="px-5 py-2 text-sm font-medium bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-lg hover:from-primary-700 hover:to-primary-800 transition-all shadow-md hover:shadow-lg"
-              data-i18n="nav.dashboard"
+             
             >
-              Dashboard
+              {t('nav.dashboard')}
             </a>
           ) : (
             <>
-              <a href="/login" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors" data-i18n="auth.sign_in">
-                Sign In
+              <a href="/login" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+                {t('auth.sign_in')}
               </a>
               <a
                 href="/register"
                 class="px-4 py-2 text-sm font-medium bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-lg hover:from-primary-700 hover:to-primary-800 transition-all shadow-md hover:shadow-lg"
-                data-i18n="landing.get_started"
+               
               >
-                Get Started
+                {t('landing.get_started')}
               </a>
             </>
           )}

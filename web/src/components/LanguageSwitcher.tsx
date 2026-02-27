@@ -30,9 +30,8 @@ export default function LanguageSwitcher({ locale }: LanguageSwitcherProps) {
 
 		document.cookie = `i18next=${code};path=/;max-age=31536000;SameSite=Lax`;
 
-		window.dispatchEvent(
-			new CustomEvent("localeChange", { detail: { lang: code } }),
-		);
+		// Force reload to trigger server-side re-render in the new language
+		window.location.reload();
 	};
 
 	return (

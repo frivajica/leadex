@@ -1,10 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { getT, getLangFromCookies } from '../lib/i18n-astro';
 
+const locale = getLangFromCookies(Astro.cookies);
+const t = getT(locale);
 const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
 ---
 
-<Layout title="Checkout - Lead Extractor">
+<Layout title={`${t('checkout.title')} - Lead Extractor`}>
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12" data-logged-in={isLoggedIn ? 'true' : 'false'} id="checkout-container">
     <div class="text-center mb-12 animate-fade-in">
       {Astro.url.searchParams.get('canceled') === 'true' && (
@@ -12,16 +15,16 @@ const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
           <svg class="w-6 h-6 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
-          <div class="text-left font-medium" data-i18n="checkout.canceled">
-            Checkout was canceled. No charges were made.
+          <div class="text-left font-medium">
+            {t('checkout.canceled')}
           </div>
         </div>
       )}
-      <h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl" data-i18n="checkout.title">
-        Choose Your Access Plan
+      <h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+        {t('checkout.title')}
       </h1>
-      <p class="mt-4 text-xl text-gray-600" data-i18n="checkout.subtitle">
-        Unlock powerful lead extraction capabilities tailored to your needs.
+      <p class="mt-4 text-xl text-gray-600">
+        {t('checkout.subtitle')}
       </p>
     </div>
 
@@ -29,40 +32,40 @@ const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
       {/* 1 Job Plan */}
       <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transform transition-all hover:-translate-y-1 hover:shadow-xl hover:border-primary-100 animate-slide-up" style="animation-delay: 0.1s">
         <div class="p-8">
-          <h3 class="text-lg font-semibold text-gray-900" data-i18n="checkout.single_job">Single Job</h3>
+          <h3 class="text-lg font-semibold text-gray-900">{t('checkout.single_job')}</h3>
           <p class="mt-4 flex items-baseline text-4xl font-extrabold text-gray-900">
             <span class="pricing-amount" data-tier="single">$4</span>
-            <span class="ml-1 text-xl font-medium text-gray-500 pricing-currency" data-i18n="checkout.per_job">/job</span>
+            <span class="ml-1 text-xl font-medium text-gray-500 pricing-currency">{t('checkout.per_job')}</span>
           </p>
-          <p class="mt-4 text-sm text-gray-500" data-i18n="checkout.single_desc">Perfect for one-off extraction needs.</p>
+          <p class="mt-4 text-sm text-gray-500">{t('checkout.single_desc')}</p>
           
           <ul role="list" class="mt-6 space-y-4">
             <li class="flex text-sm text-gray-700">
               <svg class="h-5 w-5 text-primary-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              <span data-i18n="checkout.single_feat_1">1 complete extraction run</span>
+              <span>{t('checkout.single_feat_1')}</span>
             </li>
             <li class="flex text-sm text-gray-700">
               <svg class="h-5 w-5 text-primary-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              <span data-i18n="checkout.single_feat_2">Unlimited leads per job</span>
+              <span>{t('checkout.single_feat_2')}</span>
             </li>
             <li class="flex text-sm text-gray-700">
               <svg class="h-5 w-5 text-primary-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              <span data-i18n="checkout.single_feat_3">Export to CSV/JSON</span>
+              <span>{t('checkout.single_feat_3')}</span>
             </li>
           </ul>
 
           <button
             data-checkout-tier="single"
             class="checkout-btn mt-8 block w-full bg-primary-50 text-primary-700 hover:bg-primary-100 font-semibold py-3 px-4 border border-transparent rounded-xl transition-colors text-center"
-            data-i18n="checkout.single_cta"
+           
           >
-            Buy 1 Credit
+            {t('checkout.single_cta')}
           </button>
         </div>
       </div>
@@ -71,43 +74,43 @@ const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
       <div class="bg-primary-900 rounded-2xl ring-2 ring-primary-500 shadow-xl overflow-hidden transform transition-all hover:-translate-y-1 hover:shadow-2xl animate-slide-up relative md:-mt-4 md:mb-4 z-10" style="animation-delay: 0.2s">
         <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary-400 to-primary-600"></div>
         <div class="p-8">
-          <h3 class="text-lg font-semibold text-white" data-i18n="checkout.week_title">1 Week Unlimited</h3>
-          <p class="absolute top-4 right-4 bg-primary-100 text-primary-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide" data-i18n="checkout.week_badge">
-            Most Popular
+          <h3 class="text-lg font-semibold text-white">{t('checkout.week_title')}</h3>
+          <p class="absolute top-4 right-4 bg-primary-100 text-primary-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+            {t('checkout.week_badge')}
           </p>
           <p class="mt-4 flex items-baseline text-4xl font-extrabold text-white">
             <span class="pricing-amount" data-tier="week">$10</span>
-            <span class="ml-1 text-xl font-medium text-primary-200 pricing-currency" data-i18n="checkout.per_week">/week</span>
+            <span class="ml-1 text-xl font-medium text-primary-200 pricing-currency">{t('checkout.per_week')}</span>
           </p>
-          <p class="mt-4 text-sm text-primary-100" data-i18n="checkout.week_desc">Intensive short-term lead generation.</p>
+          <p class="mt-4 text-sm text-primary-100">{t('checkout.week_desc')}</p>
           
           <ul role="list" class="mt-6 space-y-4">
             <li class="flex text-sm text-primary-50">
               <svg class="h-5 w-5 text-primary-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              <span data-i18n="checkout.week_feat_1">Unlimited extraction jobs</span>
+              <span>{t('checkout.week_feat_1')}</span>
             </li>
             <li class="flex text-sm text-primary-50">
               <svg class="h-5 w-5 text-primary-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              <span data-i18n="checkout.week_feat_2">Standard priority processing</span>
+              <span>{t('checkout.week_feat_2')}</span>
             </li>
             <li class="flex text-sm text-primary-50">
               <svg class="h-5 w-5 text-primary-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              <span data-i18n="checkout.week_feat_3">Advanced filtering</span>
+              <span>{t('checkout.week_feat_3')}</span>
             </li>
           </ul>
 
           <button
             data-checkout-tier="week"
             class="checkout-btn mt-8 block w-full bg-primary-500 text-white hover:bg-primary-600 font-semibold py-3 px-4 border border-transparent rounded-xl transition-colors text-center shadow-lg"
-            data-i18n="checkout.week_cta"
+           
           >
-            Start 1-Week Access
+            {t('checkout.week_cta')}
           </button>
         </div>
       </div>
@@ -115,40 +118,40 @@ const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
       {/* 1 Month Unlimited Plan */}
       <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transform transition-all hover:-translate-y-1 hover:shadow-xl hover:border-primary-100 animate-slide-up" style="animation-delay: 0.3s">
         <div class="p-8">
-          <h3 class="text-lg font-semibold text-gray-900" data-i18n="checkout.month_title">1 Month Unlimited</h3>
+          <h3 class="text-lg font-semibold text-gray-900">{t('checkout.month_title')}</h3>
           <p class="mt-4 flex items-baseline text-4xl font-extrabold text-gray-900">
             <span class="pricing-amount" data-tier="month">$20</span>
-            <span class="ml-1 text-xl font-medium text-gray-500 pricing-currency" data-i18n="checkout.per_month">/mo</span>
+            <span class="ml-1 text-xl font-medium text-gray-500 pricing-currency">{t('checkout.per_month')}</span>
           </p>
-          <p class="mt-4 text-sm text-gray-500" data-i18n="checkout.month_desc">Best value for continuous extraction.</p>
+          <p class="mt-4 text-sm text-gray-500">{t('checkout.month_desc')}</p>
           
           <ul role="list" class="mt-6 space-y-4">
             <li class="flex text-sm text-gray-700">
               <svg class="h-5 w-5 text-primary-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              <span data-i18n="checkout.month_feat_1">Unlimited extraction jobs</span>
+              <span>{t('checkout.month_feat_1')}</span>
             </li>
             <li class="flex text-sm text-gray-700">
               <svg class="h-5 w-5 text-primary-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              <span data-i18n="checkout.month_feat_2">Priority processing</span>
+              <span>{t('checkout.month_feat_2')}</span>
             </li>
             <li class="flex text-sm text-gray-700">
               <svg class="h-5 w-5 text-primary-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              <span data-i18n="checkout.month_feat_3">Priority support</span>
+              <span>{t('checkout.month_feat_3')}</span>
             </li>
           </ul>
 
           <button
             data-checkout-tier="month"
             class="checkout-btn mt-8 block w-full bg-primary-50 text-primary-700 hover:bg-primary-100 font-semibold py-3 px-4 border border-transparent rounded-xl transition-colors text-center"
-            data-i18n="checkout.month_cta"
+           
           >
-            Start 1-Month Access
+            {t('checkout.month_cta')}
           </button>
         </div>
       </div>
@@ -159,17 +162,17 @@ const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
         <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
         </svg>
-        <span data-i18n="checkout.secure_stripe">Secure 1-Click Checkout with Stripe Link</span>
+        <span>{t('checkout.secure_stripe')}</span>
       </div>
-      <div id="checkout-error-msg" class="hidden" data-i18n="checkout.error_failed">Failed to initiate secure checkout. Please try again.</div>
+      <div id="checkout-error-msg" class="hidden">{t('checkout.error_failed')}</div>
       
       <div class="bg-blue-50 text-blue-800 rounded-xl p-4 max-w-2xl w-full border border-blue-100 flex items-start sm:items-center gap-3 text-left sm:text-center mt-4">
         <svg class="w-6 h-6 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <span class="text-sm">
-          <strong data-i18n="checkout.developer_note">Are you a developer?</strong> <span data-i18n="checkout.developer_desc">You can use Lead Extractor entirely for free by providing your own Google Places API Key.</span> 
-          <a href="/settings" class="underline font-medium ml-1 hover:text-blue-900" data-i18n="checkout.developer_link">Learn more or Add Key &rarr;</a>
+          <strong>{t('checkout.developer_note')}</strong> <span>{t('checkout.developer_desc')}</span> 
+          <a href="/settings" class="underline font-medium ml-1 hover:text-blue-900">{t('checkout.developer_link', 'Learn more or Add Key →')}</a>
         </span>
       </div>
     </div>
@@ -181,8 +184,8 @@ const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
-        <p class="text-gray-900 font-medium" data-i18n="checkout.loading_title">Preparing secure checkout...</p>
-        <p class="text-gray-500 text-sm mt-1" data-i18n="checkout.loading_desc">You will be redirected to Stripe</p>
+        <p class="text-gray-900 font-medium">{t('checkout.loading_title', 'Preparing secure checkout...')}</p>
+        <p class="text-gray-500 text-sm mt-1">{t('checkout.loading_desc', 'You will be redirected to Stripe')}</p>
       </div>
     </div>
   </div>
@@ -247,6 +250,7 @@ const isLoggedIn = Astro.cookies.get('is_logged_in')?.value === 'true';
         } else {
           throw new Error('No checkout URL received');
         }
+      } catch (err) {
         console.error('Checkout failed:', err);
         const errorMsg = document.getElementById('checkout-error-msg')?.textContent || 'Failed to initiate secure checkout. Please try again.';
         alert(errorMsg);

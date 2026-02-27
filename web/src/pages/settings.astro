@@ -2,17 +2,21 @@
 import Layout from '../layouts/Layout.astro';
 import SettingsContent from '../components/SettingsContent';
 import Navigation from '../components/Navigation';
+import { getT, getLangFromCookies } from '../lib/i18n-astro';
+
+const locale = getLangFromCookies(Astro.cookies);
+const t = getT(locale);
 ---
 
-<Layout title="Settings - Lead Extractor">
+<Layout title={`${t('nav.settings')} - Lead Extractor`}>
   <div class="min-h-screen bg-gray-50">
     <!-- Navigation -->
     <Navigation client:load currentPath="/settings" />
 
     <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900" data-i18n="nav.settings">Settings</h1>
-        <p class="text-gray-500 mt-1" data-i18n="settings.desc">Manage your account and API keys</p>
+        <h1 class="text-2xl font-bold text-gray-900">{t('nav.settings')}</h1>
+        <p class="text-gray-500 mt-1">{t('settings.desc')}</p>
       </div>
       <SettingsContent client:load />
     </main>

@@ -1,9 +1,13 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { getT, getLangFromCookies } from '../../lib/i18n-astro';
+
+const locale = getLangFromCookies(Astro.cookies);
+const t = getT(locale);
 const apiUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:8000';
 ---
 
-<Layout title="Verifying - Lead Extractor">
+<Layout title={`${t('auth.verifying')} - Lead Extractor`}>
   <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
     <div class="max-w-md w-full text-center">
       <div id="loading" class="animate-pulse">
@@ -13,7 +17,7 @@ const apiUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:8000';
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
           </svg>
         </div>
-        <h2 class="text-xl font-semibold text-gray-900" data-i18n="auth.verifying">Verifying your account...</h2>
+        <h2 class="text-xl font-semibold text-gray-900">{t('auth.verifying')}</h2>
       </div>
 
       <div id="success" class="hidden">
@@ -22,8 +26,8 @@ const apiUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:8000';
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 class="text-xl font-semibold text-gray-900 mb-2" data-i18n="auth.verify_success">You're all set!</h2>
-        <p class="text-gray-600" data-i18n="auth.redirect_dashboard">Redirecting to your dashboard...</p>
+        <h2 class="text-xl font-semibold text-gray-900 mb-2">{t('auth.verify_success')}</h2>
+        <p class="text-gray-600">{t('auth.redirect_dashboard')}</p>
       </div>
 
       <div id="error" class="hidden">
@@ -32,16 +36,23 @@ const apiUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:8000';
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </div>
-        <h2 class="text-xl font-semibold text-gray-900 mb-2" data-i18n="auth.verify_failed">Verification failed</h2>
-        <p id="error-message" class="text-gray-600 mb-6" data-i18n="auth.verify_invalid">The magic link may have expired or is invalid.</p>
-        <a href="/login" class="inline-block px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium" data-i18n="auth.back_to_login">
-          Back to Login
+        <h2 class="text-xl font-semibold text-gray-900 mb-2">{t('auth.verify_failed')}</h2>
+        <p id="error-message" class="text-gray-600 mb-6">{t('auth.verify_invalid')}</p>
+        <a href="/login" class="inline-block px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium">
+          {t('auth.back_to_login')}
         </a>
       </div>
     </div>
   </div>
 
   <div id="api-config" data-url={apiUrl} class="hidden"></div>
+  
+  <!-- Translation Bridge -->
+  <div id="i18n-bridge" class="hidden">
+    <div id="bridge-no-token">{t('auth.error_no_token')}</div>
+    <div id="bridge-verify-invalid">{t('auth.verify_invalid')}</div>
+    <div id="bridge-generic-error">{t('auth.error_generic')}</div>
+  </div>
 </Layout>
 
 <script>
@@ -96,11 +107,15 @@ const apiUrl = import.meta.env.PUBLIC_API_URL || 'http://localhost:8000';
   function showError(i18nKey: string) {
     loadingEl?.classList.add('hidden');
     errorEl?.classList.remove('hidden');
+    
     if (errorMessageEl) {
-      errorMessageEl.setAttribute('data-i18n', i18nKey);
-      // Trigger i18n apply if already loaded
-      if ((window as any).applyI18n) {
-        (window as any).applyI18n();
+      let message = '';
+      if (i18nKey === 'auth.error_no_token') message = document.getElementById('bridge-no-token')?.textContent || '';
+      else if (i18nKey === 'auth.verify_invalid') message = document.getElementById('bridge-verify-invalid')?.textContent || '';
+      else if (i18nKey === 'auth.error_generic') message = document.getElementById('bridge-generic-error')?.textContent || '';
+      
+      if (message) {
+        errorMessageEl.textContent = message;
       }
     }
   }

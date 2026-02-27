@@ -2,14 +2,13 @@
 import Layout from '../layouts/Layout.astro';
 import AuthForm from '../components/AuthForm';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import { getT, getLangFromCookies } from '../lib/i18n-astro';
 
-const cookieLang = Astro.cookies.get('i18next')?.value;
-const headerLang = Astro.request.headers.get('accept-language')?.split(',')[0].split('-')[0];
-const supported = ['en', 'es', 'fr'];
-const currentLocale = cookieLang || (supported.includes(headerLang || '') ? headerLang : 'en');
+const currentLocale = getLangFromCookies(Astro.cookies);
+const t = getT(currentLocale);
 ---
 
-<Layout title="Sign In - Lead Extractor">
+<Layout title={`${t('auth.sign_in')} - Lead Extractor`}>
   <div class="min-h-screen flex">
     <!-- Left Side - Form -->
     <div class="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
@@ -33,16 +32,16 @@ const currentLocale = cookieLang || (supported.includes(headerLang || '') ? head
 
         <!-- Card -->
         <div class="bg-white rounded-2xl shadow-card-hover p-8 border border-gray-100">
-          <h2 class="text-2xl font-bold text-gray-900 text-center mb-2" data-i18n="auth.welcome_back">Welcome back</h2>
-          <p class="text-gray-500 text-center mb-8" data-i18n="auth.sign_in_desc">Sign in to access your leads</p>
+          <h2 class="text-2xl font-bold text-gray-900 text-center mb-2">{t('auth.welcome_back')}</h2>
+          <p class="text-gray-500 text-center mb-8">{t('auth.sign_in_desc')}</p>
 
           <AuthForm client:load action="login" locale={currentLocale} redirectUrl={Astro.url.searchParams.get('redirect')} />
         </div>
 
         <p class="mt-6 text-center text-sm text-gray-500">
-          <span data-i18n="auth.no_account">Don't have an account?</span>
-          <a href="/register" class="text-primary-600 hover:text-primary-700 font-medium transition-colors" data-i18n="auth.create_one_free">
-            Create one free
+          <span>{t('auth.no_account')}</span>
+          <a href="/register" class="text-primary-600 hover:text-primary-700 font-medium transition-colors">
+            {t('auth.create_one_free')}
           </a>
         </p>
       </div>
@@ -62,24 +61,24 @@ const currentLocale = cookieLang || (supported.includes(headerLang || '') ? head
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
           </svg>
         </div>
-        <h3 class="text-3xl font-bold mb-4" data-i18n="auth.hero_title">Find Your Next Clients</h3>
-        <p class="text-primary-100 text-lg max-w-md" data-i18n="auth.hero_desc">
-          Extract leads from local businesses without websites. Perfect for web agencies and marketers.
+        <h3 class="text-3xl font-bold mb-4">{t('auth.hero_title')}</h3>
+        <p class="text-primary-100 text-lg max-w-md">
+          {t('auth.hero_desc')}
         </p>
         
         <!-- Stats -->
         <div class="mt-12 grid grid-cols-3 gap-8">
           <div>
             <div class="text-3xl font-bold">100%</div>
-            <div class="text-primary-200 text-sm" data-i18n="landing.benefit_free">Free & Open</div>
+            <div class="text-primary-200 text-sm">Free & Open</div>
           </div>
           <div>
-            <div class="text-3xl font-bold" data-i18n="benefit.no">No</div>
-            <div class="text-primary-200 text-sm" data-i18n="landing.benefit_no_card">Credit Card</div>
+            <div class="text-3xl font-bold">{t('benefit.no', 'No')}</div>
+            <div class="text-primary-200 text-sm">{t('landing.benefit_no_card')}</div>
           </div>
           <div>
-            <div class="text-3xl font-bold" data-i18n="benefit.self">Self</div>
-            <div class="text-primary-200 text-sm" data-i18n="landing.benefit_self_hosted">Hosted</div>
+            <div class="text-3xl font-bold">{t('benefit.self', 'Self')}</div>
+            <div class="text-primary-200 text-sm">{t('landing.benefit_self_hosted')}</div>
           </div>
         </div>
       </div>
