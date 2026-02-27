@@ -120,11 +120,10 @@ export default function JobForm() {
       },
       (err) => {
         setLocationLoading(false);
-        let msg = t('jobs.form.error_location') + '. ';
-        if (err.code === 1) msg += 'Permission denied. Please allow location or enter manually.';
-        else if (err.code === 2) msg += 'Location unavailable.';
-        else msg += 'Please enter manually.';
-        setError(msg);
+        let msgCode = 'error.generic';
+        if (err.code === 1) msgCode = 'error.location.permission_denied';
+        else if (err.code === 2) msgCode = 'error.location.unavailable';
+        setError(t(msgCode));
       },
       { enableHighAccuracy: false, timeout: 15000 }
     );
@@ -172,13 +171,16 @@ export default function JobForm() {
       setTimeout(() => {
         window.location.href = `/jobs/${result.id}`;
       }, 1500);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : t('auth.error_generic');
-      if (errorMessage.toLowerCase().includes('payment required')) {
+    } catch (err: any) {
+      const errorMessage = typeof err === 'string' ? err : (err.detail || err.message || 'error.generic');
+
+      // Keep Stripe redirect logic string check or map to exact error code
+      if (errorMessage === 'error.payment.payment_required') {
         window.location.href = '/checkout';
         return;
       }
-      setError(errorMessage);
+
+      setError(t(errorMessage));
     } finally {
       setLoading(false);
     }
@@ -369,9 +371,9 @@ export default function JobForm() {
           </div>
           <input
             type="range"
-            min="1000"
-            max="15000"
-            step="1000"
+            min="100"
+            max="50000"
+            step="100"
             value={radius}
             onChange={(e) => setRadius(parseInt(e.target.value))}
             className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary-600 hover:accent-primary-700 transition-all"
@@ -383,9 +385,9 @@ export default function JobForm() {
         </div>
 
         {/* Category Groups */}
-        <div>
+        <div className="bg-white rounded-2xl shadow-premium ring-1 ring-slate-200/50 p-6 sm:p-8 space-y-4">
           <div className="flex items-center justify-between mb-3">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-lg font-semibold text-slate-900 group-hover:text-primary-700 transition-colors">
               {t('jobs.form.business_categories', 'Business Categories')} <span className="text-red-500">*</span>
             </label>
             {groups && (
@@ -401,13 +403,65 @@ export default function JobForm() {
                 <button
                   type="button"
                   onClick={() => setSelectedGroups([])}
-                  className="text-xs text-gray-500 hover:text-gray-700 font-medium"
+                  className="text-xs text-slate-500 hover:text-slate-700 font-medium"
                 >
                   {t('jobs.form.deselect_all')}
                 </button>
               </div>
             )}
           </div>
+
+          {!groups ? (
+            <div className="flex justify-center py-6">
+              <svg className="animate-spin h-6 w-6 text-primary-500" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+            </div>
+          ) : (
+            <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+              {groups.map((group) => {
+                const isSelected = selectedGroups.includes(group.id);
+                return (
+                  <button
+                    key={group.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedGroups(prev =>
+                        isSelected ? prev.filter(id => id !== group.id) : [...prev, group.id]
+                      );
+                    }}
+                    className={`relative flex flex-col p-4 border rounded-2xl shadow-sm transition-all text-left ${isSelected
+                      ? 'border-primary-500 bg-primary-50 ring-1 ring-primary-500 shadow-primary-500/10'
+                      : 'border-slate-200 bg-white hover:border-primary-300 hover:shadow-md'
+                      }`}
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <span className={`block font-medium ${isSelected ? 'text-primary-900' : 'text-slate-900'}`}>
+                        {group.label}
+                      </span>
+                      <div className={`w-5 h-5 shrink-0 rounded-full border flex items-center justify-center transition-colors ${isSelected ? 'border-primary-500 bg-primary-500 text-white' : 'border-slate-300 bg-slate-50'
+                        }`}>
+                        {isSelected && (
+                          <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                      </div>
+                    </div>
+                    <span className={`block mt-1 text-xs ${isSelected ? 'text-primary-700/80' : 'text-slate-500'}`}>
+                      {group.categories.length} {t('jobs.form.subcategories', 'subcategories')}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+          {selectedGroups.length === 0 && (
+            <p className="text-sm text-amber-600 mt-3 animate-fade-in bg-amber-50 px-4 py-2.5 rounded-xl border border-amber-200">
+              {t('jobs.form.select_category_warning', 'Please select at least one business category.')}
+            </p>
+          )}
         </div>
 
         {/* Quality Filters Card */}
@@ -697,6 +751,6 @@ export default function JobForm() {
           </p>
         )}
       </div>
-    </form>
+    </form >
   );
 }

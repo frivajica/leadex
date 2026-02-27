@@ -34,9 +34,10 @@ export default function DashboardContent({ apiUrl }: DashboardContentProps) {
       console.log('[Dashboard] User data loaded:', userData);
       console.log('[Dashboard] Managed plan?', userData.subscription_tier !== 'free');
       console.log('[Dashboard] Credits?', userData.job_credits);
-    } catch (err) {
+    } catch (err: any) {
       console.error('[Dashboard] Failed to load data:', err);
-      setError(err instanceof Error ? err.message : t('auth.error_generic'));
+      const errorMessage = typeof err === 'string' ? err : (err.detail || err.message || 'error.generic');
+      setError(t(errorMessage));
     } finally {
       setLoading(false);
     }

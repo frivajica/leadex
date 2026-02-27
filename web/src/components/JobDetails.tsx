@@ -61,8 +61,8 @@ export default function JobDetails({ jobId, apiUrl }: JobDetailsProps) {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ detail: t('jobs.export_failed') }));
-        throw new Error(errorData.detail || t('jobs.export_failed'));
+        const errorData = await response.json().catch(() => ({ detail: 'error.generic' }));
+        throw new Error(errorData.detail || 'error.generic');
       }
 
       const blob = await response.blob();
@@ -74,8 +74,9 @@ export default function JobDetails({ jobId, apiUrl }: JobDetailsProps) {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-    } catch (err) {
-      alert(err instanceof Error ? err.message : t('jobs.export_failed_desc'));
+    } catch (err: any) {
+      const errorMessage = typeof err === 'string' ? err : (err.detail || err.message || 'error.generic');
+      alert(t(errorMessage));
     }
   };
 

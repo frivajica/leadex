@@ -1,4 +1,44 @@
 {
+	"error": {
+		"validation": {
+			"invalid_email": "Please provide a valid email address.",
+			"password_too_short": "Your password must be at least 8 characters long for security.",
+			"password_too_long": "Your password is too long. Please use a password under 72 characters.",
+			"email_password_required": "Please provide both your email and password to log in.",
+			"api_key_required": "Please provide an API key to save."
+		},
+		"auth": {
+			"invalid_credentials": "We couldn't find an account with that email, or the password was incorrect.",
+			"email_already_registered": "This email is already registered. Please log in instead.",
+			"user_not_found": "We couldn't find an account with that email. Please check for typos or register.",
+			"uses_magic_link": "This account uses a magic link to sign in. Please use the magic link option instead.",
+			"invalid_password": "The password you entered is incorrect. Please try again.",
+			"invalid_magic_link": "This login link has expired or is invalid. Please request a new one.",
+			"not_authenticated": "Please log in to perform this action."
+		},
+		"job": {
+			"not_found": "We couldn't find this job. It may have been deleted.",
+			"not_completed": "Results aren't ready yet. Please wait for the job to finish.",
+			"no_results": "No leads were found for this job's criteria.",
+			"delete_failed": "We encountered an issue deleting your job. Please try again.",
+			"not_running": "This job is not currently running.",
+			"cancel_failed": "We couldn't cancel the job right now. Please try again.",
+			"cannot_restart": "Only jobs that have failed or been cancelled can be restarted."
+		},
+		"keys": {
+			"not_found": "We couldn't find an API key to delete."
+		},
+		"payment": {
+			"insufficient_credits": "You need more credits to run this job. Please upgrade your plan or add a personal API key.",
+			"payment_required": "Please set up a payment method or add a personal API key to create a job.",
+			"invalid_tier": "The selected subscription plan is invalid. Please try another option.",
+			"session_failed": "There was a problem generating the payment link.",
+			"missing_signature": "Missing payment signature security header.",
+			"invalid_payload": "Invalid payment payload received.",
+			"invalid_signature": "Invalid payment signature verification."
+		},
+		"generic": "Something went wrong. Please try again."
+	},
 	"nav": {
 		"dashboard": "Dashboard",
 		"new_job": "New Job",

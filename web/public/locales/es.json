@@ -1,4 +1,44 @@
 {
+	"error": {
+		"validation": {
+			"invalid_email": "Por favor ingresa una dirección de correo electrónico válida.",
+			"password_too_short": "Tu contraseña debe tener al menos 8 caracteres por seguridad.",
+			"password_too_long": "Tu contraseña es demasiado larga. Por favor usa una bajo los 72 caracteres.",
+			"email_password_required": "Por favor ingresa tu correo y contraseña para iniciar sesión.",
+			"api_key_required": "Por favor proporciona una clave API para guardarla."
+		},
+		"auth": {
+			"invalid_credentials": "No pudimos encontrar una cuenta con ese correo, o la contraseña es incorrecta.",
+			"email_already_registered": "Este correo ya está registrado. Por favor inicia sesión.",
+			"user_not_found": "No pudimos encontrar una cuenta con ese correo. Por favor revisa errores de escritura o regístrate.",
+			"uses_magic_link": "Esta cuenta usa un enlace mágico para iniciar sesión. Por favor usa la opción de enlace mágico.",
+			"invalid_password": "La contraseña que ingresaste es incorrecta. Por favor intenta de nuevo.",
+			"invalid_magic_link": "Este enlace de inicio ha expirado o es inválido. Por favor solicita uno nuevo.",
+			"not_authenticated": "Por favor inicia sesión para realizar esta acción."
+		},
+		"job": {
+			"not_found": "No pudimos encontrar este trabajo. Puede que haya sido eliminado.",
+			"not_completed": "Los resultados aún no están listos. Por favor espera a que el trabajo termine.",
+			"no_results": "No se encontraron prospectos para los criterios de este trabajo.",
+			"delete_failed": "Encontramos un problema al eliminar tu trabajo. Por favor intenta de nuevo.",
+			"not_running": "Este trabajo no se está ejecutando actualmente.",
+			"cancel_failed": "No pudimos cancelar el trabajo en este momento. Por favor intenta de nuevo.",
+			"cannot_restart": "Solo se pueden reiniciar trabajos fallidos o cancelados."
+		},
+		"keys": {
+			"not_found": "No pudimos encontrar una clave API para eliminar."
+		},
+		"payment": {
+			"insufficient_credits": "Necesitas más créditos para ejecutar este trabajo. Actualiza tu plan o agrega una clave API personal.",
+			"payment_required": "Configura un método de pago o agrega una clave API personal para crear un trabajo.",
+			"invalid_tier": "El plan de suscripción seleccionado es inválido. Por favor intenta con otra opción.",
+			"session_failed": "Hubo un problema al generar el enlace de pago.",
+			"missing_signature": "Falta el encabezado de seguridad de la firma de pago.",
+			"invalid_payload": "Carga de pago inválida recibida.",
+			"invalid_signature": "Verificación de firma de pago inválida."
+		},
+		"generic": "Algo salió mal. Por favor intenta de nuevo."
+	},
 	"nav": {
 		"dashboard": "Panel",
 		"new_job": "Nuevo Trabajo",

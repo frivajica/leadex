@@ -203,7 +203,7 @@ def register_with_password(email: str, password: str) -> tuple[bool, str, Option
     if user:
         # Check if user already has a password set
         if user.get("password_hash"):
-            return False, "This email is already registered. Please log in instead.", None
+            return False, "error.auth.email_already_registered", None
         # User exists but no password - set password
         password_hash = hash_password(password)
         update_user_password(user["id"], password_hash)
@@ -222,12 +222,12 @@ def login_with_password(email: str, password: str) -> tuple[bool, str, Optional[
     user = get_user_by_email(email)
 
     if not user:
-        return False, "We couldn't find an account with that email. Please check for typos or register.", None
+        return False, "error.auth.user_not_found", None
 
     if not user.get("password_hash"):
-        return False, "This account uses a magic link to sign in. Please use the magic link option instead.", None
+        return False, "error.auth.uses_magic_link", None
 
     if not verify_password(password, user["password_hash"]):
-        return False, "The password you entered is incorrect. Please try again.", None
+        return False, "error.auth.invalid_password", None
 
     return True, "Login successful", {"id": user["id"], "email": user["email"]}

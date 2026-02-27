@@ -18,7 +18,7 @@ router = APIRouter(prefix="/api/jobs", tags=["jobs"])
 def require_auth(user=Depends(get_current_user)) -> dict:
     """Require authentication."""
     if not user:
-        raise HTTPException(status_code=401, detail="Please log in to manage your jobs.")
+        raise HTTPException(status_code=401, detail="error.auth.not_authenticated")
     return user
 
 
@@ -65,9 +65,9 @@ async def create_new_job(
             # In a robust production app, use real DB transactions. The use_job_credit func uses an atomic UPDATE ... WHERE job_credits > 0.
             credit_used = use_job_credit(user["id"])
             if not credit_used:
-                raise HTTPException(status_code=402, detail="Payment required. Insufficient job credits.")
+                raise HTTPException(status_code=402, detail="error.payment.insufficient_credits")
         else:
-            raise HTTPException(status_code=402, detail="Payment required to create a new job.")
+            raise HTTPException(status_code=402, detail="error.payment.payment_required")
 
     # --- Proceed with Job Creation ---
     job_id = create_job(
@@ -121,7 +121,7 @@ async def get_job_details(
     job = get_job(job_id, user["id"])
 
     if not job:
-        raise HTTPException(status_code=404, detail="We couldn't find this job. It may have been deleted.")
+        raise HTTPException(status_code=404, detail="error.job.not_found")
 
     return job
 
@@ -135,7 +135,7 @@ async def remove_job(
     job = get_job(job_id, user["id"])
 
     if not job:
-        raise HTTPException(status_code=404, detail="Job not found")
+        raise HTTPException(status_code=404, detail="error.job.not_found")
 
     # Cancel if running
     if job["status"] == "running":
@@ -145,7 +145,7 @@ async def remove_job(
     success = delete_job(job_id, user["id"])
 
     if not success:
-        raise HTTPException(status_code=500, detail="We encountered an issue deleting your job. Please try again.")
+        raise HTTPException(status_code=500, detail="error.job.delete_failed")
 
     return {"message": "Job deleted successfully"}
 
@@ -159,15 +159,15 @@ async def cancel_job(
     job = get_job(job_id, user["id"])
 
     if not job:
-        raise HTTPException(status_code=404, detail="We couldn't find this job to cancel it.")
+        raise HTTPException(status_code=404, detail="error.job.not_found")
 
     if job["status"] != "running":
-        raise HTTPException(status_code=400, detail="This job is not currently running.")
+        raise HTTPException(status_code=400, detail="error.job.not_running")
 
     success = extractor_service.cancel_job(job_id)
 
     if not success:
-        raise HTTPException(status_code=500, detail="We couldn't cancel the job right now. Please try again.")
+        raise HTTPException(status_code=500, detail="error.job.cancel_failed")
 
     return {"message": "Job cancelled successfully"}
 
@@ -181,10 +181,10 @@ async def restart_job(
     job = get_job(job_id, user["id"])
 
     if not job:
-        raise HTTPException(status_code=404, detail="We couldn't find this job. It may have been deleted.")
+        raise HTTPException(status_code=404, detail="error.job.not_found")
 
     if job["status"] not in ["failed", "cancelled"]:
-        raise HTTPException(status_code=400, detail="Only jobs that have failed or been cancelled can be restarted.")
+        raise HTTPException(status_code=400, detail="error.job.cannot_restart")
 
     # Update status to queued
     from api_server.database import update_job_status

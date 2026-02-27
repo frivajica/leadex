@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api", tags=["results"])
 def require_auth(user=Depends(get_current_user)) -> dict:
     """Require authentication."""
     if not user:
-        raise HTTPException(status_code=401, detail="Please log in to view results.")
+        raise HTTPException(status_code=401, detail="error.auth.not_authenticated")
     return user
 
 
@@ -29,10 +29,10 @@ async def get_job_results(
     job = get_job(job_id, user["id"])
 
     if not job:
-        raise HTTPException(status_code=404, detail="We couldn't find this job. It may have been deleted.")
+        raise HTTPException(status_code=404, detail="error.job.not_found")
 
     if job["status"] != "completed":
-        raise HTTPException(status_code=400, detail="Results aren't ready yet. Please wait for the job to finish.")
+        raise HTTPException(status_code=400, detail="error.job.not_completed")
 
     results = get_result(job_id)
 
@@ -61,15 +61,15 @@ async def export_results(
     job = get_job(job_id, user["id"])
 
     if not job:
-        raise HTTPException(status_code=404, detail="We couldn't find this job. It may have been deleted.")
+        raise HTTPException(status_code=404, detail="error.job.not_found")
 
     if job["status"] != "completed":
-        raise HTTPException(status_code=400, detail="Download isn't ready yet. Please wait for the job to finish.")
+        raise HTTPException(status_code=400, detail="error.job.not_completed")
 
     results = get_result(job_id)
 
     if not results:
-        raise HTTPException(status_code=404, detail="No leads were found for this job's criteria.")
+        raise HTTPException(status_code=404, detail="error.job.no_results")
 
     filename = f"leads_{job_id}"
 

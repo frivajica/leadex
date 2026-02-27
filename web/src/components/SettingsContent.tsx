@@ -49,8 +49,9 @@ export default function SettingsContent() {
       setNewApiKey('');
       setSuccess(t('settings.api_key_added'));
       loadData();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('settings.api_key_error_add'));
+    } catch (err: any) {
+      const errorMessage = typeof err === 'string' ? err : (err.detail || err.message || 'error.generic');
+      setError(t(errorMessage));
     } finally {
       setSaving(false);
     }
@@ -63,8 +64,9 @@ export default function SettingsContent() {
       await keysApi.delete(keyId);
       setSuccess(t('settings.api_key_deleted'));
       loadData();
-    } catch (err) {
-      setError(t('settings.api_key_error_delete'));
+    } catch (err: any) {
+      const errorMessage = typeof err === 'string' ? err : (err.detail || err.message || 'error.generic');
+      setError(t(errorMessage));
     }
   };
 

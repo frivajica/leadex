@@ -87,8 +87,9 @@ export default function AuthForm({ action, locale, redirectUrl }: AuthFormProps)
         }
         setSuccess(true);
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('auth.error_generic'));
+    } catch (err: any) {
+      const errorMessage = typeof err === 'string' ? err : (err.detail || err.message || 'error.generic');
+      setError(t(errorMessage));
     } finally {
       setLoading(false);
     }
