@@ -9,7 +9,7 @@ interface JobDetailsProps {
 }
 
 export default function JobDetails({ jobId, apiUrl }: JobDetailsProps) {
-  const { t, ready } = useTranslation();
+  const { t } = useTranslation();
   const [job, setJob] = useState<Job | null>(null);
   const [results, setResults] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
@@ -217,7 +217,17 @@ export default function JobDetails({ jobId, apiUrl }: JobDetailsProps) {
             )}
             {job.status === 'running' && (
               <button
-                onClick={() => jobsApi.cancel(jobId)}
+                onClick={async () => {
+                  try {
+                    await jobsApi.cancel(jobId);
+                    // Immediate UI update
+                    setJob(prev => prev ? { ...prev, status: 'cancelled' } : null);
+                    // Reload to get potential refund message/info
+                    setTimeout(loadJob, 500);
+                  } catch (err) {
+                    console.error('Failed to cancel job:', err);
+                  }
+                }}
                 className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
               >
                 {t('common.cancel')}

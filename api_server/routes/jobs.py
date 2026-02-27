@@ -57,15 +57,16 @@ async def create_new_job(
         if expires_at > datetime.utcnow():
             has_active_sub = True
 
+    credit_deducted = False
     if not has_active_sub:
         credits = user.get("job_credits", 0)
         if credits > 0:
             from api_server.database import use_job_credit
-            # Attempt to consume a credit. Note: a race condition is possible here if the user fires multiple requests at the exact same millisecond.
-            # In a robust production app, use real DB transactions. The use_job_credit func uses an atomic UPDATE ... WHERE job_credits > 0.
+            # Attempt to consume a credit.
             credit_used = use_job_credit(user["id"])
             if not credit_used:
                 raise HTTPException(status_code=402, detail="error.payment.insufficient_credits")
+            credit_deducted = True
         else:
             raise HTTPException(status_code=402, detail="error.payment.payment_required")
 
@@ -86,6 +87,7 @@ async def create_new_job(
         min_reviews=request.min_reviews,
         min_photos=request.min_photos,
         sort_by=request.sort_by,
+        deducted_credit=credit_deducted,
     )
 
     # Start the job in background

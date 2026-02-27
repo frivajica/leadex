@@ -24,9 +24,10 @@ class LeadExtractorService:
 
     def __init__(self):
         self._running_jobs: dict[int, asyncio.Task] = {}
+        self._job_loops: dict[int, asyncio.AbstractEventLoop] = {}
         self._job_cancellations: dict[int, Callable[[], None]] = {}
 
-    def _resolve_api_key(self, user_id: int) -> Optional[str]:
+    def _resolve_api_key(self, user_id: int, job_id: int) -> Optional[str]:
         """Resolve the API key to use: user's own key first, then platform key for paid users."""
         user_key = get_active_api_key(user_id)
         if user_key:
@@ -34,6 +35,10 @@ class LeadExtractorService:
 
         user = get_user_by_id(user_id)
         if not user:
+            return None
+
+        job = get_job(job_id, user_id)
+        if not job:
             return None
 
         tier = user.get("subscription_tier", "free")
@@ -45,7 +50,9 @@ class LeadExtractorService:
             expires_at = datetime.fromisoformat(expires_at_str)
             if expires_at > datetime.utcnow():
                 has_paid_access = True
-        if credits > 0:
+        
+        # If user has credits left OR this specific job already consumed a credit
+        if credits > 0 or job.get("deducted_credit"):
             has_paid_access = True
 
         if has_paid_access and GOOGLE_PLACES_API_KEY:
@@ -64,7 +71,7 @@ class LeadExtractorService:
         if not job:
             return
 
-        api_key = self._resolve_api_key(user_id)
+        api_key = self._resolve_api_key(user_id, job_id)
         if not api_key:
             update_job_status(
                 job_id,
@@ -136,8 +143,27 @@ class LeadExtractorService:
             # Mark as completed
             update_job_status(job_id, "completed", progress=100, leads_found=len(leads))
 
+            # If no leads were found and a credit was deducted, refund it
+            if len(leads) == 0 and job.get("deducted_credit"):
+                from api_server.database import refund_job_credit
+                refund_job_credit(user_id)
+                update_job_status(job_id, "completed", error_message="Refunded: No leads found for your criteria.")
+
         except Exception as e:
+            # If the task was cancelled, it's already handled in cancel_job
+            # Otherwise update status to failed and refund
+            try:
+                # Check if current task is cancelled
+                if isinstance(e, asyncio.CancelledError):
+                    return
+            except:
+                pass
+
             update_job_status(job_id, "failed", error_message=str(e))
+            # Refund if job fails and a credit was deducted
+            if job.get("deducted_credit"):
+                from api_server.database import refund_job_credit
+                refund_job_credit(user_id)
 
     async def _progress_handler(self, job_id: int, category: str, completed: int, total: int):
         """Handle progress updates."""
@@ -158,10 +184,13 @@ class LeadExtractorService:
 
         task = loop.create_task(run())
         self._running_jobs[job_id] = task
+        self._job_loops[job_id] = loop
 
         def done_callback(t):
             if job_id in self._running_jobs:
                 del self._running_jobs[job_id]
+            if job_id in self._job_loops:
+                del self._job_loops[job_id]
 
         task.add_done_callback(done_callback)
 
@@ -173,8 +202,25 @@ class LeadExtractorService:
         """Cancel a running job."""
         if job_id in self._running_jobs:
             task = self._running_jobs[job_id]
-            task.cancel()
+            loop = self._job_loops.get(job_id)
+            
+            if loop:
+                loop.call_soon_threadsafe(task.cancel)
+            else:
+                task.cancel() # Fallback
+
+            # Update status
             update_job_status(job_id, "cancelled")
+            
+            # Refund if it was a paid job
+            # Note: We need to fetch the job here because we might be in a different thread
+            # than where the status update happens.
+            from api_server.database import get_job, refund_job_credit
+            job = get_job(job_id)
+            if job and job.get("deducted_credit"):
+                refund_job_credit(job["user_id"])
+                update_job_status(job_id, "cancelled", error_message="Refunded: Job cancelled by user.")
+                
             return True
         return False
 

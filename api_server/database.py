@@ -102,15 +102,22 @@ def init_db():
             )
         """)
 
-        # Add new columns if they don't exist (basic migration)
-        import sqlite3
+        # Migration: Add deducted_credit column if it doesn't exist
+        try:
+            cursor.execute("SELECT deducted_credit FROM jobs LIMIT 1")
+        except sqlite3.OperationalError:
+            cursor.execute("ALTER TABLE jobs ADD COLUMN deducted_credit INTEGER DEFAULT 0")
+
+        # Migration: Add new columns if they don't exist (basic migration)
+        # import sqlite3 - already imported at top
         for col in ["require_no_website", "require_no_social", "require_phone", "require_address"]:
             try:
                 cursor.execute(f"ALTER TABLE jobs ADD COLUMN {col} INTEGER DEFAULT 0")
             except sqlite3.OperationalError:
                 pass # Column already exists
-
-        # Results table
+    
+    # Results table
+    with get_db_cursor() as cursor:
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS results (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -210,6 +217,17 @@ def use_job_credit(user_id: int) -> bool:
         return cursor.rowcount > 0
 
 
+def refund_job_credit(user_id: int) -> bool:
+    """Refund one job credit to the user."""
+    now = datetime.utcnow().isoformat()
+    with get_db_cursor() as cursor:
+        cursor.execute(
+            "UPDATE users SET job_credits = job_credits + 1, updated_at = ? WHERE id = ?",
+            (now, user_id)
+        )
+        return cursor.rowcount > 0
+
+
 def create_api_key(user_id: int, key_name: str, api_key: str) -> int:
     """Create a new API key for a user."""
     now = datetime.utcnow().isoformat()
@@ -268,6 +286,7 @@ def create_job(
     min_reviews: int = None,
     min_photos: int = None,
     sort_by: str = "score",
+    deducted_credit: bool = False,
 ) -> int:
     """Create a new job."""
     now = datetime.utcnow().isoformat()
@@ -279,8 +298,8 @@ def create_job(
                 user_id, name, center_lat, center_lng, center_address,
                 categories, radius, require_no_website, require_no_social,
                 require_phone, require_address, min_rating, min_reviews, min_photos,
-                sort_by, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                sort_by, deducted_credit, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 user_id, name, center_lat, center_lng, center_address,
                 categories_json, radius,
@@ -289,7 +308,7 @@ def create_job(
                 1 if require_phone else 0,
                 1 if require_address else 0,
                 min_rating, min_reviews, min_photos,
-                sort_by, now, now
+                sort_by, 1 if deducted_credit else 0, now, now
             )
         )
         return cursor.lastrowid
@@ -362,6 +381,13 @@ def update_job_status(
     values.append(job_id)
 
     with get_db_cursor() as cursor:
+        # Optimization: If setting to 'running', don't overwrite terminal states
+        if status in ["running", "queued"]:
+            cursor.execute("SELECT status FROM jobs WHERE id = ?", (job_id,))
+            row = cursor.fetchone()
+            if row and row["status"] in ["completed", "failed", "cancelled"]:
+                return False
+
         cursor.execute(
             f"UPDATE jobs SET {', '.join(updates)} WHERE id = ?",
             values
